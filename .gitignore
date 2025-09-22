@@ -1,0 +1,4 @@
+/node_modules
+/vendor/
+*.code-workspace
+.env*

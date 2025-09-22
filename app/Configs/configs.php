@@ -1,0 +1,28 @@
+<?php
+const DEV = true;
+
+// declare database config
+const _HOST = "localhost";
+const _PORT = "3306";
+const _DB = "lms_db";
+const _USER = "root";
+const _PASS = "";
+const _DRIVER = "mysql";
+
+// error debug
+const _DEBUG = true;
+
+// host setup
+const _DEV_HOST_URL = "https://vigilant-umbrella-97wvvjwvv6grc7qqg-80.app.github.dev//doan-php";
+const BASE_DIR = '/doan-php';
+
+define('_HOST_URL', DEV ? _DEV_HOST_URL : "http://" . $_SERVER["HTTP_HOST"] . "/doan-php");
+define('_HOST_URL_PUBLIC', _HOST_URL . "/public");
+define('_HOST_URL_VIEWS', _HOST_URL . "/app/Views");
+
+// path setup
+define('_PROJECT_ROOT', __DIR__ . '/../..');
+define('_PATH_URL_APP', _PROJECT_ROOT . '/app');
+define('_PATH_URL_CONTROLLERS', _PROJECT_ROOT . '/app/Controllers');
+define('_PATH_URL_CORE', _PROJECT_ROOT . '/app/Core');
+define('_PATH_URL_VIEWS', _PROJECT_ROOT . '/app/Views');
