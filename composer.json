@@ -1,15 +1,9 @@
 {
-    "name": "davidlastexe/doan-php",
+    "name": "doan-phpcoban/doan-phpcoban",
     "autoload": {
         "psr-4": {
             "App\\": "app/"
         }
     },
-    "authors": [
-        {
-            "name": "davidlastexe",
-            "email": "vpsgithub@outlook.com"
-        }
-    ],
     "require": {}
 }
