@@ -13,10 +13,10 @@ const _DRIVER = "mysql";
 const _DEBUG = true;
 
 // host setup
-const _DEV_HOST_URL = "https://vigilant-umbrella-97wvvjwvv6grc7qqg-80.app.github.dev//doan-php";
-const BASE_DIR = '/doan-php';
+const _DEV_HOST_URL = "https://vigilant-umbrella-97wvvjwvv6grc7qqg-80.app.github.dev/doan-phpcoban";
+const BASE_DIR = '/doan-phpcoban';
 
-define('_HOST_URL', DEV ? _DEV_HOST_URL : "http://" . $_SERVER["HTTP_HOST"] . "/doan-php");
+define('_HOST_URL', DEV ? _DEV_HOST_URL : "http://" . $_SERVER["HTTP_HOST"] . "/doan-phpcoban");
 define('_HOST_URL_PUBLIC', _HOST_URL . "/public");
 define('_HOST_URL_VIEWS', _HOST_URL . "/app/Views");
 

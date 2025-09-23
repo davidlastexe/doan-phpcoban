@@ -22,11 +22,6 @@ class Router {
     $this->add('POST', $uri, $controller, $action);
   }
 
-  public function any($uri, $controller, $action) {
-    $this->add('GET', $uri, $controller, $action);
-    $this->add('POST', $uri, $controller, $action);
-  }
-
   public function dispatch($uri, $method) {
     if (isset($this->routes[$method]) && array_key_exists($uri, $this->routes[$method])) {
       $route = $this->routes[$method][$uri];

@@ -10,12 +10,12 @@ class AuthController {
     // }
   }
 
-  public function showRegisterForm() {
-    require_once _PATH_URL_VIEWS.'/pages/register.php';
-  }
-
   public function showLoginForm() {
     require_once _PATH_URL_VIEWS.'/pages/login.php';
+  }
+
+  public function showRegisterForm() {
+    require_once _PATH_URL_VIEWS.'/pages/register.php';
   }
 
   // public function handleRegister() {
