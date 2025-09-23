@@ -1,1 +1,12 @@
 @import "tailwindcss";
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+@layer components {
+  label.required::before {
+    content: "*";
+    color: #dc2626;
+    margin-right: 0.25rem;
+  }
+}
