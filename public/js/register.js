@@ -1,15 +1,8 @@
 import { AppConfig } from "./app.js";
+import { showToast } from "./functions.js";
 const registerForm = document.getElementById("register-form");
 const registerToast = document.getElementById("register-toast");
 const inputs = registerForm.querySelectorAll("[data-field]");
-function createToast(message) {
-    const newToast = document.createElement("div");
-    const spanText = document.createElement("span");
-    spanText.textContent = message;
-    newToast.classList.add("alert", "alert-success");
-    newToast.appendChild(spanText);
-    return newToast;
-}
 function displayError(fieldName, message) {
     const errorElement = document.querySelector(`.error-log[data-field="${fieldName}"]`);
     if (errorElement) {
@@ -116,8 +109,8 @@ registerForm.addEventListener("submit", async (event) => {
             body: formData,
         }).then((res) => res.json());
         if (result.data) {
-            registerToast.appendChild(createToast(result.message));
-            window.location.href = result.data.redirect_url;
+            showToast({ toastContainer: registerToast, message: result.message, type: "success", duration: 5000 });
+            registerForm.reset();
         }
     }
     catch (error) {

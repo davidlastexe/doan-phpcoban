@@ -82,9 +82,9 @@ class Helpers {
   }
 
   public static function removePathFolder($requestPath) {
-    if (BASE_DIR != '') {
-      if (strpos($requestPath, BASE_DIR) === 0) {
-        $requestPath = substr($requestPath, strlen(BASE_DIR));
+    if ($_ENV['BASE_PROJECT_NAME'] != '') {
+      if (strpos($requestPath, $_ENV['BASE_PROJECT_NAME']) === 0) {
+        $requestPath = substr($requestPath, strlen($_ENV['BASE_PROJECT_NAME']));
       }
     }
 
@@ -104,13 +104,13 @@ class Helpers {
       $mail->isSMTP();
       $mail->Host = 'smtp.gmail.com';
       $mail->SMTPAuth = true;
-      $mail->Username = 'anhtraidep001@gmail.com';
-      $mail->Password = 'uplmpaowottlquky';
+      $mail->Username = $_ENV["EMAIL_SENDER"];
+      $mail->Password = $_ENV["EMAIL_PASSWORD"];
       $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
       $mail->Port = 465;
 
       //Recipients
-      $mail->setFrom('anhtraidep001@gmail.com', 'NgocMarketing Course');
+      $mail->setFrom($_ENV["EMAIL_SENDER"], 'Ăn Vặt Shop');
       $mail->addAddress($emailTo);
 
       //Content

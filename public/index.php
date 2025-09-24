@@ -4,6 +4,10 @@ session_start();
 ob_start();
 
 require_once __DIR__.'/../vendor/autoload.php';
+
+$dotenv = Dotenv\Dotenv::createImmutable(__DIR__ . '/..');
+$dotenv->load();
+
 require_once __DIR__.'/../app/Configs/configs.php';
 
 use App\Core\Router;
@@ -19,6 +23,7 @@ $router->get('/', HomeController::class, 'index');
 $router->get('/dashboard', PageController::class, 'dashboard');
 $router->get('/login', AuthController::class, 'showLoginForm');
 $router->get('/register', AuthController::class, 'showRegisterForm');
+$router->get('/activate', AuthController::class, 'showActivatePage');
 $router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
 
 $router->post('/api/register', ApiAuthController::class, 'handleRegister');

@@ -13,3 +13,5 @@ export interface RegisterResponse {
     redirect_url: string;
   };
 }
+
+export type ToastType = "success" | "error" | "info" | "warning";

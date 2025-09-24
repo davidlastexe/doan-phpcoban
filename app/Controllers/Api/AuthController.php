@@ -3,6 +3,7 @@ namespace App\Controllers\Api;
 
 use Exception, App\Models\User;
 use App\Helpers\Helpers;
+use DateTime, DateInterval;
 
 class AuthController {
   public function checkEmail() {
@@ -75,11 +76,17 @@ class AuthController {
     }
 
     $emailVerificationToken = sha1(uniqid().time());
+
+    $now = new DateTime();
+    $expiresAt = $now->add(new DateInterval('PT30M'));
+    $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
+
     $dataToInsert = [
       'full_name' => $formData['full_name'],
       'email' => $formData['email'],
       'password' => password_hash($formData['password'], PASSWORD_DEFAULT),
       'email_verification_token' => $emailVerificationToken,
+      'verification_expires_at' => $expiresAtFormatted,
     ];
     if (!empty($formData['phone_number'])) {
       $dataToInsert['phone_number'] = $formData['phone_number'];
@@ -89,6 +96,14 @@ class AuthController {
       // Mã 500 (Internal Server Error) cho lỗi từ phía server (ví dụ: lỗi database)
       Helpers::sendJsonResponse(false, 'Đăng ký thất bại do lỗi hệ thống. Vui lòng thử lại!', null, 500);
     }
+
+    $activationLink = _HOST_URL."/activate?token=$emailVerificationToken";
+    $subject = "Xác nhận email và kích hoạt tài khoản Ăn Vặt Shop";
+    ob_start();
+    require_once _PATH_URL_VIEWS.'/pages/email-content.php';
+    $content = ob_get_clean();
+
+    Helpers::sendMail($formData['email'], $subject, $content);
 
     $successData = [
       'redirect_url' => _HOST_URL.'/login?register=success'

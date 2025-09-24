@@ -12,8 +12,8 @@ class Database {
         PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
       ];
       $dsn_template = "%s:host=%s;port=%s;dbname=%s";
-      $dsn = sprintf($dsn_template, _DRIVER, _HOST, _PORT, _DB);
-      $this->connect = new PDO($dsn, _USER, _PASS, $options);
+      $dsn = sprintf($dsn_template, $_ENV["DB_DRIVER"], $_ENV["DB_HOST"], $_ENV["DB_PORT"], $_ENV["DB_DB"]);
+      $this->connect = new PDO($dsn, $_ENV["DB_USER"], $_ENV["DB_PASS"], $options);
     } catch (Exception $ex) {
       echo "Lỗi kết nối: ".$ex->getMessage();
       exit();

@@ -14,9 +14,11 @@ CREATE TABLE
     `password` VARCHAR(255) NOT NULL,
     `address` TEXT,
     `email_verification_token` VARCHAR(255),
+    `verification_expires_at` DATETIME NULL
     `forgot_password_token` VARCHAR(255),
     `forgot_password_expires_at` DATETIME NULL,
-    `is_active` BOOLEAN NOT NULL DEFAULT 0,
+    `is_activated` BOOLEAN NOT NULL DEFAULT 0,
+    `email_verified_at` TIMESTAMP NULL,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY `uq_email` (`email`),
