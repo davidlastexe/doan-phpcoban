@@ -1,4 +1,4 @@
-# doan-phpcoban
+# Snack Food Website
 
 ## How to run this project
 
