@@ -4,7 +4,7 @@
 <?php
 use App\Helpers\Helpers;
 
-Helpers::layout("head", ["title" => "Đăng nhập"]);
+Helpers::layout("head", ["title" => "Đăng ký"]);
 ?>
 
 <body>
@@ -121,11 +121,19 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
 
         <div class="border-t h-[1px] my-6"></div>
 
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-2 items-center">
           <button
             type="submit"
-            class="btn"
+            class="btn w-full"
           >Đăng ký</button>
+          <div>
+            <span>Đã có tài khoản?
+              <a
+                href="<?php echo _HOST_URL; ?>/login"
+                class=" underline"
+              >Đăng nhập</a>
+            </span>
+          </div>
         </div>
       </div>
     </form>

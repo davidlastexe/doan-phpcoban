@@ -1378,6 +1378,12 @@
   .place-items-center {
     place-items: center;
   }
+  .items-center {
+    align-items: center;
+  }
+  .justify-center {
+    justify-content: center;
+  }
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
@@ -1388,11 +1394,6 @@
   .border-t {
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;
-  }
-  .alert-info {
-    border-color: var(--color-info);
-    color: var(--color-info-content);
-    --alert-color: var(--color-info);
   }
   .alert-success {
     border-color: var(--color-success);
