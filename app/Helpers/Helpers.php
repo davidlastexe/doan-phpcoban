@@ -1,0 +1,146 @@
+<?php
+namespace App\Helpers;
+
+use PHPMailer\PHPMailer\PHPMailer;
+use PHPMailer\PHPMailer\SMTP;
+use PHPMailer\PHPMailer\Exception;
+
+class Helpers {
+  public static function layout($layoutName, $data = []) {
+    $name = _PATH_URL_VIEWS."/layouts/{$layoutName}.php";
+    if (file_exists($name)) {
+      require_once $name;
+    }
+  }
+
+  public static function isPost() {
+    return $_SERVER["REQUEST_METHOD"] === 'POST';
+  }
+
+  public static function isGet() {
+    return $_SERVER["REQUEST_METHOD"] === 'GET';
+  }
+
+  public static function filterData($method = '') {
+    $filterArr = [];
+    $inputData = [];
+
+    if (empty($method)) {
+      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
+        $inputData = $_GET;
+      } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $inputData = $_POST;
+      }
+    } else if ($method === 'GET') {
+      $inputData = $_GET;
+    } else if ($method === 'POST') {
+      $inputData = $_POST;
+    }
+
+    if (!empty($inputData)) {
+      foreach ($inputData as $key => $value) {
+        $key = strip_tags($key);
+        if (is_array($value)) {
+          $sanitizedValue = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
+          foreach ($sanitizedValue as &$item) {
+            $item = trim($item);
+          }
+          $filterArr[$key] = $sanitizedValue;
+        } else {
+          $filterArr[$key] = trim(filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS));
+        }
+      }
+    }
+    return $filterArr;
+  }
+
+  public static function validateEmail($email) {
+    if (!empty($email)) {
+      return filter_var($email, FILTER_VALIDATE_EMAIL);
+    }
+    return false;
+  }
+
+  public static function validateInt($number) {
+    if (!empty($number)) {
+      return filter_var($number, FILTER_VALIDATE_INT);
+    }
+    return false;
+  }
+
+  public static function isPhone($phone) {
+    $phone = preg_replace('/[^0-9+]/', '', $phone);
+    if (strpos($phone, '+84') === 0) {
+      $phone = '0'.substr($phone, 3);
+    }
+    $regex = '/^(0)(3[2-9]|5[6|8|9]|7[0|6-9]|8[1-6|8|9]|9[0-4|6-9])[0-9]{7}$/';
+    return preg_match($regex, $phone) > 0;
+  }
+
+  public static function getMsg($msg, $type) {
+    echo "<div class=\"alert alert-{$type}\" role=\"alert\">{$msg}</div>";
+  }
+
+  public static function removePathFolder($requestPath) {
+    if (BASE_DIR != '') {
+      if (strpos($requestPath, BASE_DIR) === 0) {
+        $requestPath = substr($requestPath, strlen(BASE_DIR));
+      }
+    }
+
+    if (empty($requestPath)) {
+      $requestPath = '/';
+    }
+
+    return $requestPath;
+  }
+
+  public static function sendMail($emailTo, $subject, $content) {
+    $mail = new PHPMailer(true);
+
+    try {
+      //Server settings
+      $mail->SMTPDebug = SMTP::DEBUG_OFF;
+      $mail->isSMTP();
+      $mail->Host = 'smtp.gmail.com';
+      $mail->SMTPAuth = true;
+      $mail->Username = 'anhtraidep001@gmail.com';
+      $mail->Password = 'uplmpaowottlquky';
+      $mail->SMTPSecure = PHPMailer::ENCRYPTION_SMTPS;
+      $mail->Port = 465;
+
+      //Recipients
+      $mail->setFrom('anhtraidep001@gmail.com', 'NgocMarketing Course');
+      $mail->addAddress($emailTo);
+
+      //Content
+      $mail->CharSet = "UTF-8";
+      $mail->isHTML(true);
+      $mail->Subject = $subject;
+      $mail->Body = $content;
+
+      return $mail->send();
+    } catch (Exception $ex) {
+      echo "Message could not be sent. Mailer Error: {$mail->ErrorInfo}";
+      return false;
+    }
+  }
+
+  public static function sendJsonResponse(bool $success, string $message, ?array $data = null, int $httpCode = 200) {
+    header('Content-Type: application/json');
+
+    http_response_code($httpCode);
+
+    $response = [
+      'success' => $success,
+      'message' => $message,
+    ];
+
+    if ($data !== null) {
+      $response['data'] = $data;
+    }
+
+    echo json_encode($response);
+    exit();
+  }
+}

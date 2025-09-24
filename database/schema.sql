@@ -2,6 +2,7 @@ CREATE DATABASE IF NOT EXISTS `snack_shop_dev` CHARACTER
 SET
   utf8mb4 COLLATE utf8mb4_unicode_ci;
 
+-- edit my.cnf: default_time_zone = +07:00 after [mysqld]
 USE snack_shop_dev;
 
 CREATE TABLE
@@ -9,13 +10,19 @@ CREATE TABLE
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `full_name` VARCHAR(255) NOT NULL,
     `email` VARCHAR(255) NOT NULL,
-    `phone_number` VARCHAR(15) NULL,
+    `phone_number` VARCHAR(15),
     `password` VARCHAR(255) NOT NULL,
     `address` TEXT,
+    `email_verification_token` VARCHAR(255),
+    `forgot_password_token` VARCHAR(255),
+    `forgot_password_expires_at` DATETIME NULL,
+    `is_active` BOOLEAN NOT NULL DEFAULT 0,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     UNIQUE KEY `uq_email` (`email`),
-    UNIQUE KEY `uq_phone_number` (`phone_number`)
+    UNIQUE KEY `uq_phone_number` (`phone_number`),
+    UNIQUE KEY `uq_email_verification_token` (`email_verification_token`),
+    UNIQUE KEY `uq_forgot_password_token` (`forgot_password_token`)
   );
 
 CREATE TABLE
@@ -23,7 +30,7 @@ CREATE TABLE
     `id` INT PRIMARY KEY AUTO_INCREMENT,
     `category_name` VARCHAR(255) NOT NULL,
     `image_url` VARCHAR(255),
-    UNIQUE KEY `uq_category_name` (`category_name`),
+    UNIQUE KEY `uq_category_name` (`category_name`)
   );
 
 CREATE TABLE

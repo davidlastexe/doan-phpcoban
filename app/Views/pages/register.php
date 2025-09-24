@@ -2,44 +2,138 @@
 <html lang="vi">
 
 <?php
-layout("head", ["title" => "Đăng nhập"]);
+use App\Helpers\Helpers;
+
+Helpers::layout("head", ["title" => "Đăng nhập"]);
 ?>
 
 <body>
   <div class="container mx-auto grid h-screen place-items-center">
-    <form @submit.prevent="() => {}" method="post" action="" novalidate>
+    <div
+      id="register-toast"
+      class="toast toast-top toast-center"
+    >
+    </div>
+    <form
+      id="register-form"
+      novalidate
+    >
       <div class="flex flex-col mx-auto md:w-96 w-full">
         <h1 class="text-2xl font-bold mb-4 text-center">Đăng ký</h1>
+
         <div class="flex flex-col gap-2 mb-4">
-          <label for="fullname" class="required">Họ Tên</label>
-          <input id="fullname" type="text" name="fullname" placeholder="Nhập tên" class="input w-full" />
+          <label
+            for="full_name"
+            class="required"
+          >Họ Tên</label>
+          <input
+            id="full_name"
+            type="text"
+            name="full_name"
+            placeholder="Nhập tên"
+            class="input w-full"
+            data-field="full_name"
+            required
+          />
+          <div
+            class="error-log hidden"
+            data-field="full_name"
+          ></div>
         </div>
 
         <div class="flex flex-col gap-2 mb-4">
-          <label for="email" class="required">Email</label>
-          <input id="email" name="email" type="email" placeholder="Nhập Email" class="input w-full" />
+          <label
+            for="email"
+            class="required"
+          >Email</label>
+          <input
+            id="email"
+            name="email"
+            type="email"
+            placeholder="Nhập Email"
+            class="input w-full"
+            data-field="email"
+            required
+          />
+          <div
+            class="error-log hidden"
+            data-field="email"
+          ></div>
         </div>
 
         <div class="flex flex-col gap-2 mb-4">
-          <label for="password" class="required">Mật khẩu</label>
-          <input id="password" name="password" type="password" placeholder="Đặt mật khẩu" class="input w-full" />
+          <label for="phone_number">Số điện thoại</label>
+          <input
+            id="phone_number"
+            name="phone_number"
+            type="tel"
+            placeholder="Nhập số điện thoại"
+            class="input w-full"
+            data-field="phone_number"
+          />
+          <div
+            class="error-log hidden"
+            data-field="phone_number"
+          ></div>
+        </div>
+
+        <div class="flex flex-col gap-2 mb-4">
+          <label
+            for="password"
+            class="required"
+          >Mật khẩu</label>
+          <input
+            id="password"
+            name="password"
+            type="password"
+            placeholder="Đặt mật khẩu"
+            class="input w-full"
+            data-field="password"
+            required
+          />
+          <div
+            class="error-log hidden"
+            data-field="password"
+          ></div>
         </div>
 
         <div class="flex flex-col gap-2">
-          <label for="password_confirmation" class="required">
+          <label
+            for="confirm_password"
+            class="required"
+          >
             Xác nhận mật khẩu
           </label>
-          <input id="password_confirmation" name="password_confirmation" type="password" placeholder="Xác nhận mật khẩu" class="input w-full" />
+          <input
+            id="confirm_password"
+            name="confirm_password"
+            type="password"
+            placeholder="Xác nhận mật khẩu"
+            class="input w-full"
+            data-field="confirm_password"
+            required
+          />
+          <div
+            class="error-log hidden"
+            data-field="confirm_password"
+          ></div>
         </div>
 
         <div class="border-t h-[1px] my-6"></div>
 
         <div class="flex flex-col gap-2">
-          <button type="submit" class="btn">Đăng ký</button>
+          <button
+            type="submit"
+            class="btn"
+          >Đăng ký</button>
         </div>
       </div>
     </form>
   </div>
+  <script
+    type="module"
+    src="./public/js/register.js"
+  ></script>
 </body>
 
 </html>
