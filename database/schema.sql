@@ -1,3 +1,9 @@
+CREATE DATABASE IF NOT EXISTS `snack_shop_dev`
+CHARACTER SET utf8mb4
+COLLATE utf8mb4_vietnamese_ci;
+
+USE snack_shop_dev;
+
 CREATE TABLE
   `users` (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
