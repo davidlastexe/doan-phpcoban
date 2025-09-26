@@ -24,8 +24,10 @@ $router->get('/dashboard', PageController::class, 'dashboard');
 $router->get('/login', AuthController::class, 'showLoginForm');
 $router->get('/register', AuthController::class, 'showRegisterForm');
 $router->get('/activate', AuthController::class, 'showActivatePage');
-$router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
 
+// API
+$router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
+$router->post('/api/activate', ApiAuthController::class, 'activateAccount');
 $router->post('/api/register', ApiAuthController::class, 'handleRegister');
 
 $requestUri = $_SERVER['REQUEST_URI'];

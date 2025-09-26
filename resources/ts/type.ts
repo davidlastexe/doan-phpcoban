@@ -6,12 +6,10 @@ export interface RegisterFormData {
   phone_number?: string;
 }
 
-export interface RegisterResponse {
+export interface DefaultResponse<T> {
   success: boolean;
   message: string;
-  data?: {
-    redirect_url: string;
-  };
+  data?: T;
 }
 
 export type ToastType = "success" | "error" | "info" | "warning";

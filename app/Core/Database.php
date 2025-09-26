@@ -42,10 +42,10 @@ class Database {
     }
   }
 
-  public function getOne($sql) {
+  public function getOne($sql, $params = []) {
     try {
       $stm = $this->connect->prepare($sql);
-      $stm->execute();
+      $stm->execute($params);
       return $stm->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $ex) {
       echo "Error: {$ex->getMessage()}<br>";
@@ -77,9 +77,9 @@ class Database {
     }
   }
 
-  public function update($table, $data, $condition = "", $params_condition = []) {
+  public function update(string $table, array $data, string $condition = "", array $params_condition = []) {
     $fields = implode(", ", array_map(fn ($key) => "`{$key}` = :{$key}", array_keys($data)));
-    $sql = $condition ? "UPDATE $table SET $fields WHERE $condition" : "UPDATE $table SET $fields";
+    $sql = $condition ? "UPDATE `$table` SET $fields WHERE $condition" : "UPDATE $table SET $fields";
 
     try {
       $stm = $this->connect->prepare($sql);

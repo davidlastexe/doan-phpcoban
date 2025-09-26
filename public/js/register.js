@@ -54,7 +54,6 @@ async function validateField(input) {
                 errorMessage = "Họ tên phải có ít nhất 5 ký tự!";
             break;
         case "email":
-            const resCheckMail = await checkEmailExists(value);
             if (!value)
                 errorMessage = "Email không được bỏ trống!";
             else if (!validateEmail(value))
@@ -108,9 +107,17 @@ registerForm.addEventListener("submit", async (event) => {
             method: "post",
             body: formData,
         }).then((res) => res.json());
-        if (result.data) {
-            showToast({ toastContainer: registerToast, message: result.message, type: "success", duration: 5000 });
+        if (result.success) {
+            showToast({
+                toastContainer: registerToast,
+                message: result.message,
+                type: "success",
+                duration: 5000,
+            });
             registerForm.reset();
+        }
+        else if (result.data) {
+            console.log(result.data);
         }
     }
     catch (error) {

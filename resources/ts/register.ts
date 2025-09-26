@@ -1,6 +1,6 @@
 import { AppConfig } from "./app.js";
 import { showToast } from "./functions.js";
-import type { RegisterResponse } from "./type.js";
+import type { DefaultResponse } from "./type.js";
 
 const registerForm = document.getElementById(
   "register-form"
@@ -69,7 +69,6 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
       break;
 
     case "email":
-      const resCheckMail = await checkEmailExists(value);
       if (!value) errorMessage = "Email không được bỏ trống!";
       else if (!validateEmail(value)) errorMessage = "Email không hợp lệ!";
       else if (await checkEmailExists(value))
@@ -128,14 +127,21 @@ registerForm.addEventListener("submit", async (event: SubmitEvent) => {
     const formData = new FormData(registerForm);
     const url = `${AppConfig.baseUrl}/api/register`;
 
-    const result: RegisterResponse = await fetch(url, {
+    const result: DefaultResponse<{ errors?: string[][] }> = await fetch(url, {
       method: "post",
       body: formData,
     }).then((res) => res.json());
 
-    if (result.data) {
-      showToast({ toastContainer: registerToast, message: result.message, type: "success", duration: 5000 });
+    if (result.success) {
+      showToast({
+        toastContainer: registerToast,
+        message: result.message,
+        type: "success",
+        duration: 5000,
+      });
       registerForm.reset();
+    } else if (result.data) {
+      console.log(result.data);
     }
   } catch (error) {
     console.log(error);

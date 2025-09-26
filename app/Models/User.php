@@ -18,4 +18,21 @@ class User {
   public function createUser($data) {
     return $this->db->insert('users', $data);
   }
+
+  public function findUserByValidToken(string $token) {
+    $sql = "SELECT * FROM `users`
+            WHERE `email_verification_token` = :token
+            AND `verification_expires_at` > NOW()
+            AND `is_activated` = 0";
+    return $this->db->getOne($sql, ['token' => $token]);
+  }
+
+  public function activateUserAccount(int $userId) {
+    $data = [
+      'is_activated' => 1,
+      'email_verification_token' => null,
+      'email_verified_at' => date('Y:m:d H:i:s')
+    ];
+    return $this->db->update('users', $data, "`id` = :id", ['id' => $userId]);
+  }
 }

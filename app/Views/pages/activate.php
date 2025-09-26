@@ -13,19 +13,17 @@ Helpers::layout("head", ["title" => "Kích hoạt tài khoản"]);
       class="toast toast-top toast-center"
     >
     </div>
-    <form
-      id="register-form"
-      novalidate
-    >
-      <div class="flex flex-col mx-auto md:w-96 w-full">
-        <h1 class="text-2xl font-bold mb-4 text-center">Kích hoạt tài khoản</h1>
-
-        <!-- NOTE: Thực hiện việc kích hoạt rồi trả về thông báo cho user -->
-
-        <a href="<?php echo _HOST_URL; ?>/login"><button type="button" class="btn w-full">Đến trang đăng nhập</button></a>
-      </div>
-    </form>
+    <div class="flex flex-col mx-auto md:w-96 w-full">
+      <h1
+        id="activate-noti"
+        class="text-2xl font-bold mb-4 text-center"
+      >Vui lòng chờ kích hoạt tài khoản...</h1>
+    </div>
   </div>
+  <script
+    type="module"
+    src="./public/js/activate.js"
+  ></script>
 </body>
 
 </html>

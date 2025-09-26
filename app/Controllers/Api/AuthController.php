@@ -105,11 +105,27 @@ class AuthController {
 
     Helpers::sendMail($formData['email'], $subject, $content);
 
-    $successData = [
-      'redirect_url' => _HOST_URL.'/login?register=success'
-    ];
-
     // Mã 201 (Created) là mã chuẩn cho việc tạo thành công một tài nguyên mới
-    Helpers::sendJsonResponse(true, 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', $successData, 201);
+    Helpers::sendJsonResponse(true, 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', null, 201);
+  }
+
+  public function activateAccount() {
+    $token = $_POST['token'] ?? null;
+
+    if (!$token)
+      Helpers::sendJsonResponse(false, 'Token xác thực không được cung cấp.', null, 400);// 400 bad request
+
+    $userModel = new User();
+    $user = $userModel->findUserByValidToken($token);
+
+    if ($user) {
+      $isActivated = $userModel->activateUserAccount($user['id']);
+
+      if ($isActivated)
+        Helpers::sendJsonResponse(true, 'Tài khoản đã được kích hoạt thành công.');
+      else
+        Helpers::sendJsonResponse(false, 'Có lỗi xảy ra trong quá trình kích hoạt.', null, 500); // 500 internal server error
+    } else
+      Helpers::sendJsonResponse(false, 'Link kích hoạt không hợp lệ hoặc đã hết hạn.', null, 400);
   }
 }
