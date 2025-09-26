@@ -71,7 +71,7 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
             <span>Chưa có tài khoản?
               <a
                 href="<?php echo _HOST_URL; ?>/register"
-                class=" underline"
+                class="underline"
               >Đăng ký</a>
             </span>
           </div>
@@ -81,7 +81,7 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
   </div>
   <script
     type="module"
-    src="./public/js/register.js"
+    src="./public/js/login.js"
   ></script>
 </body>
 

@@ -130,7 +130,7 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
             <span>Đã có tài khoản?
               <a
                 href="<?php echo _HOST_URL; ?>/login"
-                class=" underline"
+                class="underline"
               >Đăng nhập</a>
             </span>
           </div>

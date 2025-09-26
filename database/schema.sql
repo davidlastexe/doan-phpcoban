@@ -14,7 +14,7 @@ CREATE TABLE
     `password` VARCHAR(255) NOT NULL,
     `address` TEXT,
     `email_verification_token` VARCHAR(255),
-    `verification_expires_at` DATETIME NULL
+    `verification_expires_at` DATETIME NULL,
     `forgot_password_token` VARCHAR(255),
     `forgot_password_expires_at` DATETIME NULL,
     `is_activated` BOOLEAN NOT NULL DEFAULT 0,
@@ -25,6 +25,51 @@ CREATE TABLE
     UNIQUE KEY `uq_phone_number` (`phone_number`),
     UNIQUE KEY `uq_email_verification_token` (`email_verification_token`),
     UNIQUE KEY `uq_forgot_password_token` (`forgot_password_token`)
+  );
+
+CREATE TABLE
+  `refresh_tokens` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `user_id` INT NOT NULL,
+    `token_hash` VARCHAR(255) NOT NULL,
+    `expires_at` DATETIME NOT NULL,
+    `user_agent` VARCHAR(255),
+    `ip_address` VARCHAR(45),
+    `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE KEY `uq_token_hash` (`token_hash`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE
+  );
+
+CREATE TABLE
+  `roles` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(50) NOT NULL UNIQUE,
+    `description` TEXT
+  );
+
+CREATE TABLE
+  `permissions` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `name` VARCHAR(100) NOT NULL UNIQUE,
+    `description` TEXT
+  );
+
+CREATE TABLE
+  `role_user` (
+    `user_id` INT NOT NULL,
+    `role_id` INT NOT NULL,
+    PRIMARY KEY (`user_id`, `role_id`),
+    FOREIGN KEY (`user_id`) REFERENCES `users` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
+  );
+
+CREATE TABLE
+  `permission_role` (
+    `permission_id` INT NOT NULL,
+    `role_id` INT NOT NULL,
+    PRIMARY KEY (`permission_id`, `role_id`),
+    FOREIGN KEY (`permission_id`) REFERENCES `permissions` (`id`) ON DELETE CASCADE,
+    FOREIGN KEY (`role_id`) REFERENCES `roles` (`id`) ON DELETE CASCADE
   );
 
 CREATE TABLE
