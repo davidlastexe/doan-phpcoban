@@ -25,13 +25,10 @@ class Helpers {
     $filterArr = [];
     $inputData = [];
 
-    if (empty($method)) {
-      if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        $inputData = $_GET;
-      } else if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $inputData = $_POST;
-      }
-    } else if ($method === 'GET') {
+    $requestMethod = strtoupper($_SERVER['REQUEST_METHOD']);
+    $method = empty($method) ? $requestMethod : strtoupper($method);
+
+    if ($method === 'GET') {
       $inputData = $_GET;
     } else if ($method === 'POST') {
       $inputData = $_POST;

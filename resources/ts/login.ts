@@ -1,6 +1,8 @@
 import { AppConfig } from "./app.js";
 import { validateEmail } from "./auth-functions.js";
+import { spinnerIcon } from "./constants.js";
 import { clearError, displayError, showToast } from "./functions.js";
+import { authService } from "./services/AuthService.js";
 import type { DefaultResponse, LoginResponse } from "./type.js";
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
@@ -52,14 +54,19 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
 
   if (!isFormValid) return;
 
+  const submitButton = loginForm.querySelector<HTMLButtonElement>(
+    'button[type="submit"]'
+  );
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.innerHTML = `${spinnerIcon} Đang đăng nhập...`;
+  }
+
   try {
     const formData = new FormData(loginForm);
-    const url = `${AppConfig.baseUrl}/api/login`;
-
-    const result: DefaultResponse<LoginResponse> = await fetch(url, {
-      method: "post",
-      body: formData,
-    }).then((res) => res.json());
+    const result: DefaultResponse<LoginResponse> = await authService.login(
+      formData
+    );
 
     if (result.success && result.data) {
       showToast({
@@ -67,7 +74,9 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
         message: result.message,
         type: "success",
       });
-      localStorage.setItem("access_token", result.data.access_token);
+      window.location.href = `${
+        AppConfig.production ? "/" : AppConfig.projectName
+      }`;
       loginForm.reset();
     } else {
       showToast({
@@ -78,5 +87,15 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
     }
   } catch (error) {
     console.log(error);
+    showToast({
+      toastContainer: loginToast,
+      message: "Lỗi kết nối máy chủ!",
+      type: "error",
+    });
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = "Đăng nhập";
+    }
   }
 });

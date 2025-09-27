@@ -1,6 +1,8 @@
 import { AppConfig } from "./app.js";
 import { validateEmail } from "./auth-functions.js";
+import { spinnerIcon } from "./constants.js";
 import { clearError, displayError, showToast } from "./functions.js";
+import { authService } from "./services/AuthService.js";
 const loginForm = document.getElementById("login-form");
 const loginToast = document.getElementById("login-toast");
 const inputs = loginForm.querySelectorAll("[data-field]");
@@ -40,20 +42,21 @@ loginForm.addEventListener("submit", async (event) => {
     isFormValid = results.every((isValid) => isValid);
     if (!isFormValid)
         return;
+    const submitButton = loginForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = `${spinnerIcon} Đang đăng nhập...`;
+    }
     try {
         const formData = new FormData(loginForm);
-        const url = `${AppConfig.baseUrl}/api/login`;
-        const result = await fetch(url, {
-            method: "post",
-            body: formData,
-        }).then((res) => res.json());
+        const result = await authService.login(formData);
         if (result.success && result.data) {
             showToast({
                 toastContainer: loginToast,
                 message: result.message,
                 type: "success",
             });
-            localStorage.setItem("access_token", result.data.access_token);
+            window.location.href = `${AppConfig.production ? "/" : AppConfig.projectName}`;
             loginForm.reset();
         }
         else {
@@ -66,5 +69,16 @@ loginForm.addEventListener("submit", async (event) => {
     }
     catch (error) {
         console.log(error);
+        showToast({
+            toastContainer: loginToast,
+            message: "Lỗi kết nối máy chủ!",
+            type: "error",
+        });
+    }
+    finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Đăng nhập";
+        }
     }
 });

@@ -1,6 +1,7 @@
 import { AppConfig } from "./app.js";
-import { checkEmailExists, isPhone, validateEmail } from "./auth-functions.js";
+import { isPhone, validateEmail } from "./auth-functions.js";
 import { clearError, displayError, showToast } from "./functions.js";
+import { authService } from "./services/AuthService.js";
 const registerForm = document.getElementById("register-form");
 const registerToast = document.getElementById("register-toast");
 const inputs = registerForm.querySelectorAll("[data-field]");
@@ -21,7 +22,7 @@ async function validateField(input) {
                 errorMessage = "Email không được bỏ trống!";
             else if (!validateEmail(value))
                 errorMessage = "Email không hợp lệ!";
-            else if (await checkEmailExists(value))
+            else if (await authService.checkEmailExists(value))
                 errorMessage = "Email này đã được sử dụng!";
             break;
         case "phone_number":

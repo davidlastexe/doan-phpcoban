@@ -1,5 +1,5 @@
 <?php
-define('_HOST_URL', !!$_ENV['PRODUCTION'] ? $_ENV['CODESPACE_HOST_URL'].$_ENV['BASE_PROJECT_NAME'] : 'http://'.$_SERVER['HTTP_HOST'].$_ENV['BASE_PROJECT_NAME']);
+define('_HOST_URL', !!$_ENV['PRODUCTION'] ? $_ENV['HOST_URL'].$_ENV['BASE_PROJECT_NAME'] : 'http://'.$_SERVER['HTTP_HOST'].$_ENV['BASE_PROJECT_NAME']);
 define('_HOST_URL_PUBLIC', _HOST_URL.'/public');
 
 // path setup

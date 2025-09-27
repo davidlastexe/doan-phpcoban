@@ -2,7 +2,6 @@
 namespace App\Core;
 
 use PDO, Exception, PDOException;
-use RuntimeException;
 
 class Database {
   private $connect;
@@ -73,13 +72,16 @@ class Database {
       $stm = $this->connect->prepare($sql);
       return $stm->execute($data);
     } catch (PDOException $ex) {
-      throw new RuntimeException("Error: ", 0, $ex);
+      $log_message = "Lỗi nghiêm trọng: ".$ex->getMessage()."\n";
+      $log_message .= "File: ".$ex->getFile()." Dòng: ".$ex->getLine()."\n";
+      $log_message .= "Stack Trace: \n".$ex->getTraceAsString();
+      error_log($log_message, 0);
     }
   }
 
   public function update(string $table, array $data, string $condition = "", array $params_condition = []) {
     $fields = implode(", ", array_map(fn ($key) => "`{$key}` = :{$key}", array_keys($data)));
-    $sql = $condition ? "UPDATE `$table` SET $fields WHERE $condition" : "UPDATE $table SET $fields";
+    $sql = $condition ? "UPDATE `$table` SET $fields WHERE $condition" : "UPDATE `$table` SET $fields";
 
     try {
       $stm = $this->connect->prepare($sql);
@@ -92,7 +94,7 @@ class Database {
   }
 
   public function delete($table, $condition = "", $params_condition = []) {
-    $sql = $condition ? "DELETE FROM $table WHERE $condition" : "DELETE FROM $table";
+    $sql = $condition ? "DELETE FROM `$table` WHERE $condition" : "DELETE FROM `$table`";
 
     try {
       $stm = $this->connect->prepare($sql);

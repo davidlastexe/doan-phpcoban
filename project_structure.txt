@@ -1,0 +1,81 @@
+command: tree -a -I "node_modules|vendor|.git|.vscode|doan-phpcoban.code-workspace"
+.
+├── .env
+├── .gitignore
+├── .htaccess
+├── README.md
+├── app
+│   ├── Configs
+│   │   └── configs.php
+│   ├── Controllers
+│   │   ├── Api
+│   │   │   └── AuthController.php
+│   │   ├── AuthController.php
+│   │   ├── HomeController.php
+│   │   └── PageController.php
+│   ├── Core
+│   │   ├── Database.php
+│   │   └── Router.php
+│   ├── Helpers
+│   │   └── Helpers.php
+│   ├── Middleware
+│   │   ├── AuthMiddleware.php
+│   │   ├── GuestMiddleware.php
+│   │   ├── PermissionMiddleware.php
+│   │   └── SanitizeInputMiddleware.php
+│   ├── Models
+│   │   ├── RefreshToken.php
+│   │   └── User.php
+│   └── Views
+│       ├── layouts
+│       │   └── head.php
+│       └── pages
+│           ├── activate.php
+│           ├── email-content.php
+│           ├── login.php
+│           └── register.php
+├── build-tailwind-all.js
+├── bun.lock
+├── composer.json
+├── composer.lock
+├── database
+│   ├── data.sql
+│   ├── database_structure.md
+│   ├── queries.sql
+│   └── schema.sql
+├── package.json
+├── project_structure.txt
+├── public
+│   ├── .htaccess
+│   ├── css
+│   │   └── app.css
+│   ├── index.php
+│   └── js
+│       ├── activate.js
+│       ├── app.js
+│       ├── auth-functions.js
+│       ├── constants.js
+│       ├── functions.js
+│       ├── login.js
+│       ├── register.js
+│       ├── services
+│       │   └── AuthService.js
+│       └── type.js
+├── resources
+│   ├── css
+│   │   └── app.css
+│   └── ts
+│       ├── activate.ts
+│       ├── app.ts
+│       ├── auth-functions.ts
+│       ├── constants.ts
+│       ├── functions.ts
+│       ├── login.ts
+│       ├── register.ts
+│       ├── services
+│       │   └── AuthService.ts
+│       └── type.ts
+├── tree_structure.txt
+└── tsconfig.json
+
+21 directories, 57 files

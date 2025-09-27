@@ -10,23 +10,19 @@ use DateTimeImmutable;
 
 class AuthController {
   public function checkEmail() {
-    header('Content-Type: application/json');
-
     $email = $_GET['email'];
 
     if (empty($email)) {
-      echo json_encode(['error' => 'Email is required']);
-      exit();
+      Helpers::sendJsonResponse(false, 'Email không được để trống', null, 400);
     }
 
-    $userModel = new User();
-
     try {
+      $userModel = new User();
       $exists = $userModel->emailExists($email);
-      echo json_encode(['exists' => $exists]);
+      Helpers::sendJsonResponse(true, 'Kiểm tra email thành công', ['exists' => $exists]);
     } catch (Exception $e) {
-      http_response_code(500);
-      echo json_encode(['error' => $e->getMessage()]);
+      error_log("Check email failed: ".$e->getMessage());
+      Helpers::sendJsonResponse(false, 'Lỗi hệ thống', null, 500);
     }
 
     exit();
@@ -37,7 +33,7 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
     }
 
-    $formData = Helpers::filterData('POST');
+    $formData = $_POST;
     $errors = [];
     $userModel = new User();
 
@@ -116,18 +112,18 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
     }
 
-    $formData = Helpers::filterData('POST');
+    $formData = $_POST;
     $errors = [];
 
     // Validate email
     if (empty($formData['email']))
-      $errors[] = "Email không được bỏ trống!";
+      $errors['email'][] = "Email không được bỏ trống!";
     else if (!Helpers::validateEmail($formData['email']))
-      $errors[] = "Email không hợp lệ!";
+      $errors['email'][] = "Email không hợp lệ!";
 
     // Validate password
     if (empty($formData['password']))
-      $errors[] = "Mật khẩu không được để trống!";
+      $errors['password'][] = "Mật khẩu không được để trống!";
 
     if (!empty($errors)) {
       Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['errors' => $errors], 422);
@@ -140,11 +136,22 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Email hoặc mật khẩu không chính xác.', null, 401);
     }
 
+    if ($user['is_activated'] == 0) {
+      Helpers::sendJsonResponse(false, 'Tài khoản của bạn chưa được kích hoạt. Vui lòng kiểm tra email.', null, 403);
+    }
+
+    $tokenModel = new RefreshToken();
+
+    $deviceLimit = intval($_ENV['DEVICE_LOGIN_LIMIT']) ?? 5;
+    $currentTokenCount = $tokenModel->getTokenCountForUser($user['id']);
+    if ($currentTokenCount >= $deviceLimit) {
+      $tokenModel->deleteOldestTokenForUser($user['id'], $deviceLimit - 1);
+    }
+
     $refreshToken = bin2hex(random_bytes(32));
     $refreshTokenHash = hash('sha256', $refreshToken);
     $refreshTokenExpiresAt = (new DateTime())->add(new DateInterval('P30D'));
 
-    $tokenModel = new RefreshToken();
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
     $ipAddress = $userModel->getUserIpAddress();
 
@@ -166,7 +173,7 @@ class AuthController {
       ]
     );
 
-    $secretKey = $_ENV['REFRESH_TOKEN_SECRET'];
+    $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
     $issuedAt = new DateTimeImmutable();
     $expire = $issuedAt->modify('+15 minutes')->getTimestamp();
     $roles = array_column($userModel->getRolesUser($user['id']), 'name');

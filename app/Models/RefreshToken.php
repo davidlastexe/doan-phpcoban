@@ -20,4 +20,21 @@ class RefreshToken {
     ];
     return $this->db->insert('refresh_tokens', $data);
   }
+
+  public function getTokenCountForUser($userId) {
+    $sql = "SELECT `created_at` FROM `refresh_tokens`
+            WHERE `user_id` = :user_id";
+    return $this->db->countRows($sql, ['user_id' => $userId]);
+  }
+
+  public function deleteOldestTokenForUser($userId, $deviceLimit) {
+    $condition = "`id` NOT IN (
+                    SELECT `id` FROM (
+                      SELECT `id` FROM `refresh_tokens`
+                      WHERE `user_id` = :user_id
+                      ORDER BY `created_at` DESC LIMIT $deviceLimit
+                    ) AS newest_refresh_tokens
+                  )";
+    return $this->db->delete('refresh_tokens', $condition, ['user_id' => $userId]);
+  }
 }
