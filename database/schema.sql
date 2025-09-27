@@ -43,15 +43,17 @@ CREATE TABLE
 CREATE TABLE
   `roles` (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(50) NOT NULL UNIQUE,
-    `description` TEXT
+    `name` VARCHAR(50) NOT NULL,
+    `description` TEXT,
+    UNIQUE KEY `uq_name` (`name`)
   );
 
 CREATE TABLE
   `permissions` (
     `id` INT PRIMARY KEY AUTO_INCREMENT,
-    `name` VARCHAR(100) NOT NULL UNIQUE,
-    `description` TEXT
+    `name` VARCHAR(100) NOT NULL,
+    `description` TEXT,
+    UNIQUE KEY `uq_name` (`name`)
   );
 
 CREATE TABLE

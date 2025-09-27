@@ -2,6 +2,7 @@
 namespace App\Core;
 
 use PDO, Exception, PDOException;
+use RuntimeException;
 
 class Database {
   private $connect;
@@ -68,12 +69,11 @@ class Database {
     $places = ":".implode(",:", $keys);
 
     try {
-      $sql = "INSERT INTO $table ($fields) VALUES ($places)";
+      $sql = "INSERT INTO `$table` ($fields) VALUES ($places)";
       $stm = $this->connect->prepare($sql);
       return $stm->execute($data);
     } catch (PDOException $ex) {
-      echo "Error: {$ex->getMessage()}<br>";
-      return false;
+      throw new RuntimeException("Error: ", 0, $ex);
     }
   }
 

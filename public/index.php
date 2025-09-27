@@ -29,6 +29,7 @@ $router->get('/activate', AuthController::class, 'showActivatePage');
 $router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
 $router->post('/api/activate', ApiAuthController::class, 'activateAccount');
 $router->post('/api/register', ApiAuthController::class, 'handleRegister');
+$router->post('/api/login', ApiAuthController::class, 'handleLogin');
 
 $requestUri = $_SERVER['REQUEST_URI'];
 $requestPath = parse_url($requestUri, PHP_URL_PATH);

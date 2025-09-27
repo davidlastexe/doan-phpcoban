@@ -39,15 +39,16 @@ class Helpers {
 
     if (!empty($inputData)) {
       foreach ($inputData as $key => $value) {
-        $key = strip_tags($key);
+        // loại bỏ các thẻ HTML, XML và PHP
+        $cleanKey = strip_tags($key);
         if (is_array($value)) {
-          $sanitizedValue = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS, FILTER_REQUIRE_ARRAY);
-          foreach ($sanitizedValue as &$item) {
-            $item = trim($item);
+          $sanitizedValue = [];
+          foreach ($value as $k => $v) {
+            $sanitizedValue[strip_tags($k)] = trim(filter_var($v, FILTER_SANITIZE_SPECIAL_CHARS));
           }
-          $filterArr[$key] = $sanitizedValue;
+          $filterArr[$cleanKey] = $sanitizedValue;
         } else {
-          $filterArr[$key] = trim(filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS));
+          $filterArr[$cleanKey] = trim(filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS));
         }
       }
     }

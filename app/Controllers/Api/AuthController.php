@@ -4,6 +4,9 @@ namespace App\Controllers\Api;
 use Exception, App\Models\User;
 use App\Helpers\Helpers;
 use DateTime, DateInterval;
+use Firebase\JWT\JWT;
+use App\Models\RefreshToken;
+use DateTimeImmutable;
 
 class AuthController {
   public function checkEmail() {
@@ -34,7 +37,7 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
     }
 
-    $formData = Helpers::filterData();
+    $formData = Helpers::filterData('POST');
     $errors = [];
     $userModel = new User();
 
@@ -75,8 +78,7 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['errors' => $errors], 422);
     }
 
-    $emailVerificationToken = sha1(uniqid().time());
-
+    $emailVerificationToken = bin2hex(random_bytes(32));
     $now = new DateTime();
     $expiresAt = $now->add(new DateInterval('PT30M'));
     $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
@@ -109,14 +111,99 @@ class AuthController {
     Helpers::sendJsonResponse(true, 'Đăng ký thành công! Vui lòng kiểm tra email để xác thực tài khoản.', null, 201);
   }
 
+  public function handleLogin() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
+    $formData = Helpers::filterData('POST');
+    $errors = [];
+
+    // Validate email
+    if (empty($formData['email']))
+      $errors[] = "Email không được bỏ trống!";
+    else if (!Helpers::validateEmail($formData['email']))
+      $errors[] = "Email không hợp lệ!";
+
+    // Validate password
+    if (empty($formData['password']))
+      $errors[] = "Mật khẩu không được để trống!";
+
+    if (!empty($errors)) {
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['errors' => $errors], 422);
+    }
+
+    $userModel = new User();
+    $user = $userModel->findUserByEmail($formData['email']);
+
+    if (!$user || !password_verify($formData['password'], $user['password'])) {
+      Helpers::sendJsonResponse(false, 'Email hoặc mật khẩu không chính xác.', null, 401);
+    }
+
+    $refreshToken = bin2hex(random_bytes(32));
+    $refreshTokenHash = hash('sha256', $refreshToken);
+    $refreshTokenExpiresAt = (new DateTime())->add(new DateInterval('P30D'));
+
+    $tokenModel = new RefreshToken();
+    $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
+    $ipAddress = $userModel->getUserIpAddress();
+
+    $isSaved = $tokenModel->saveToken($user['id'], $refreshTokenHash, $refreshTokenExpiresAt->format('Y-m-d H:i:s'), $userAgent, $ipAddress);
+
+    if (!$isSaved) {
+      Helpers::sendJsonResponse(false, 'Lỗi hệ thống, không thể tạo phiên đăng nhập.', null, 500);
+    }
+
+    setcookie(
+      'refresh_token',
+      $refreshToken,
+      [
+        'expires' => $refreshTokenExpiresAt->getTimestamp(),
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
+      ]
+    );
+
+    $secretKey = $_ENV['REFRESH_TOKEN_SECRET'];
+    $issuedAt = new DateTimeImmutable();
+    $expire = $issuedAt->modify('+15 minutes')->getTimestamp();
+    $roles = array_column($userModel->getRolesUser($user['id']), 'name');
+    $permissions = array_column($userModel->getPermissionsUser($user['id']), 'name');
+
+    $payload = [
+      'iat' => $issuedAt->getTimestamp(),     // Issued At
+      'exp' => $expire,                       // Expiration Time
+      'data' => [
+        'userId' => $user['id'],
+        'roles' => $roles,
+        'permissions' => $permissions
+      ]
+    ];
+
+    $accessToken = JWT::encode($payload, $secretKey, 'HS256');
+
+    $responseData = [
+      'access_token' => $accessToken,
+      'expires_in' => $expire,
+    ];
+
+    Helpers::sendJsonResponse(true, 'Đăng nhập thành công!', $responseData);
+  }
+
   public function activateAccount() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
     $token = $_POST['token'] ?? null;
 
     if (!$token)
       Helpers::sendJsonResponse(false, 'Token xác thực không được cung cấp.', null, 400);// 400 bad request
 
     $userModel = new User();
-    $user = $userModel->findUserByValidToken($token);
+    $user = $userModel->findUserByEmailVeriToken($token);
 
     if ($user) {
       $isActivated = $userModel->activateUserAccount($user['id']);
