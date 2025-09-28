@@ -68,6 +68,12 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
             class="btn w-full"
           >Đăng nhập</button>
           <div>
+            <a
+              href="<?php echo _HOST_URL; ?>/forgot-password"
+              class="underline"
+            >Quên mật khẩu?</a>
+          </div>
+          <div>
             <span>Chưa có tài khoản?
               <a
                 href="<?php echo _HOST_URL; ?>/register"
@@ -81,7 +87,7 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
   </div>
   <script
     type="module"
-    src="./public/js/login.js"
+    src="./public/js/pages/login.js"
   ></script>
 </body>
 

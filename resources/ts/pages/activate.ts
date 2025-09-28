@@ -1,5 +1,5 @@
-import { AppConfig } from "./app.js";
-import type { DefaultResponse } from "./type.js";
+import { AppConfig } from "../app.js";
+import type { DefaultResponse } from "../type.js";
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);

@@ -1,4 +1,4 @@
-import { AppConfig } from "./app.js";
+import { AppConfig } from "../app.js";
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
 const token = urlParams.get("token");

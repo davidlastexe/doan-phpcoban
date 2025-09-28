@@ -9,15 +9,19 @@ class AuthController {
     // }
   }
 
-  public function showLoginForm() {
+  public function showLoginPage() {
     require_once _PATH_URL_VIEWS.'/pages/login.php';
   }
 
-  public function showRegisterForm() {
+  public function showRegisterPage() {
     require_once _PATH_URL_VIEWS.'/pages/register.php';
   }
 
   public function showActivatePage() {
     require_once _PATH_URL_VIEWS.'/pages/activate.php';
+  }
+
+  public function showForgotPasswordPage() {
+    require_once _PATH_URL_VIEWS.'/pages/forgot-password.php';
   }
 }

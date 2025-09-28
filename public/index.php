@@ -22,17 +22,19 @@ $router = new Router();
 // Ai cũng vào được
 $router->get('/', HomeController::class, 'index');
 
-// Route users chưa login
+// Route chưa login
 $router->get('/activate', AuthController::class, 'showActivatePage', ['guest']);
+$router->get('/login', AuthController::class, 'showLoginPage', ['guest']);
+$router->get('/register', AuthController::class, 'showRegisterPage', ['guest']);
+$router->get('/forgot-password', AuthController::class, 'showForgotPasswordPage', ['guest']);
 
+// Route đã login
 $router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
-$router->get('/login', AuthController::class, 'showLoginForm', ['guest']);
-$router->get('/register', AuthController::class, 'showRegisterForm', ['guest']);
 
 // API không cần middleware
 $router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
 
-// API cho users chưa login
+// API chưa login
 $router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['guest']);
 $router->post('/api/register', ApiAuthController::class, 'handleRegister', ['sanitize', 'guest']);
 $router->post('/api/login', ApiAuthController::class, 'handleLogin', ['sanitize', 'guest']);
