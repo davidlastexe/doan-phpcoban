@@ -1,7 +1,7 @@
 import { AppConfig } from "../app.js";
 import { isPhone, validateEmail } from "../auth-functions.js";
 import { clearError, displayError, showToast } from "../functions.js";
-import { authService } from "../services/AuthService.js";
+import { authService } from "../services/auth-service.js";
 const registerForm = document.getElementById("register-form");
 const registerToast = document.getElementById("register-toast");
 const inputs = registerForm.querySelectorAll("[data-field]");

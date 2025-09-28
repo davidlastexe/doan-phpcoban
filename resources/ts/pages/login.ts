@@ -2,7 +2,7 @@ import { AppConfig } from "../app.js";
 import { validateEmail } from "../auth-functions.js";
 import { spinnerIcon } from "../constants.js";
 import { clearError, displayError, showToast } from "../functions.js";
-import { authService } from "../services/AuthService.js";
+import { authService } from "../services/auth-service.js";
 import type { DefaultResponse, LoginResponse } from "../type.js";
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
