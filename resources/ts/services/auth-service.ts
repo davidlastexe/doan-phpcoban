@@ -27,7 +27,14 @@ class AuthService {
   }
 
   async register(formData: FormData) {
-    // TODO: Làm tương tự login
+    const url = `${AppConfig.baseUrl}/api/register`;
+
+    const result: DefaultResponse<{ errors?: string[][] }> = await fetch(url, {
+      method: "post",
+      body: formData,
+    }).then((res) => res.json());
+
+    return result;
   }
 
   async login(formData: FormData) {

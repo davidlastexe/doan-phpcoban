@@ -65,9 +65,7 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
 
   try {
     const formData = new FormData(loginForm);
-    const result: DefaultResponse<LoginResponse> = await authService.login(
-      formData
-    );
+    const result = await authService.login(formData);
 
     if (result.success && result.data) {
       toastManager.createToast({

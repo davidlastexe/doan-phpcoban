@@ -90,12 +90,7 @@ registerForm.addEventListener("submit", async (event: SubmitEvent) => {
 
   try {
     const formData = new FormData(registerForm);
-    const url = `${AppConfig.baseUrl}/api/register`;
-
-    const result: DefaultResponse<{ errors?: string[][] }> = await fetch(url, {
-      method: "post",
-      body: formData,
-    }).then((res) => res.json());
+    const result = await authService.register(formData);
 
     if (result.success) {
       toastManager.createToast({
