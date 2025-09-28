@@ -4,11 +4,11 @@ import { spinnerIcon } from "../constants.js";
 import { clearError, displayError } from "../functions.js";
 import { authService } from "../services/auth-service.js";
 import { toastManager } from "../toast-manager.js";
-import type { DefaultResponse, LoginResponse } from "../type.js";
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
 const inputs = loginForm.querySelectorAll<HTMLInputElement>("[data-field]");
 
+// TODO: hàm được dùng nhiều nơi nên xây dựng thành class helper
 async function validateField(input: HTMLInputElement): Promise<boolean> {
   const fieldName = input.name;
   const value = input.value?.trim();

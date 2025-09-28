@@ -13,11 +13,21 @@ export interface LoginFormData {
   password: string;
 }
 
-export interface DefaultResponse<T> {
-  success: boolean;
+interface SuccessResponse<T> {
+  success: true;
   message: string;
-  data?: T;
+  data: T;
 }
+
+interface ErrorResponse<K> {
+  success: false;
+  message: string;
+  errors?: K;
+}
+
+export type ApiResponse<T, K = Record<string, string[]>> =
+  | SuccessResponse<T>
+  | ErrorResponse<K>;
 
 export interface LoginResponse {
   access_token: string;

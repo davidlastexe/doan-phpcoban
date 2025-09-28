@@ -9,7 +9,7 @@ class AuthService {
         const url = `${AppConfig.baseUrl}/api/check-email?email=${email}`;
         try {
             const result = await fetch(url).then((res) => res.json());
-            if (result.data)
+            if (result.success)
                 return result.data.exists;
             return false;
         }
@@ -28,6 +28,14 @@ class AuthService {
         }).then((res) => res.json());
         return result;
     }
+    async activateAccount(formData) {
+        const url = `${AppConfig.baseUrl}/api/activate`;
+        const result = await fetch(url, {
+            method: "post",
+            body: formData,
+        }).then((res) => res.json());
+        return result;
+    }
     async login(formData) {
         const url = `${AppConfig.baseUrl}/api/login`;
         const result = await fetch(url, {
@@ -38,6 +46,22 @@ class AuthService {
             this.accessToken = result.data.access_token;
             localStorage.setItem("access_token", result.data.access_token);
         }
+        return result;
+    }
+    async forgotPassword(formData) {
+        const url = `${AppConfig.baseUrl}/api/forgot-password`;
+        const result = await fetch(url, {
+            method: "post",
+            body: formData,
+        }).then((res) => res.json());
+        return result;
+    }
+    async resetPassword(formData) {
+        const url = `${AppConfig.baseUrl}/api/reset-password`;
+        const result = await fetch(url, {
+            method: "post",
+            body: formData,
+        }).then((res) => res.json());
         return result;
     }
     logout() {

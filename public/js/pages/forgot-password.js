@@ -1,0 +1,74 @@
+import { validateEmail } from "../auth-functions.js";
+import { spinnerIcon } from "../constants.js";
+import { clearError, displayError } from "../functions.js";
+import { authService } from "../services/auth-service.js";
+import { toastManager } from "../toast-manager.js";
+const forgotForm = document.getElementById("forgot-form");
+const inputs = forgotForm.querySelectorAll("[data-field]");
+// TODO: hàm được dùng nhiều nơi nên xây dựng thành class helper
+async function validateField(input) {
+    const fieldName = input.name;
+    const value = input.value?.trim();
+    let errorMessage = "";
+    clearError(fieldName);
+    switch (fieldName) {
+        case "email":
+            if (!value)
+                errorMessage = "Email không được bỏ trống!";
+            else if (!validateEmail(value))
+                errorMessage = "Email không hợp lệ!";
+            break;
+    }
+    if (errorMessage) {
+        displayError(fieldName, errorMessage);
+        return false;
+    }
+    return true;
+}
+inputs.forEach((input) => {
+    input.addEventListener("blur", () => {
+        validateField(input);
+    });
+});
+// FIX: chỉ cho user gửi lại sau 1p
+forgotForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    let isFormValid = true;
+    const validationPromises = Array.from(inputs).map((input) => validateField(input));
+    const results = await Promise.all(validationPromises);
+    isFormValid = results.every((isValid) => isValid);
+    if (!isFormValid)
+        return;
+    // TODO: tạo hệ thống hoặc gì đó giúp tối ưu handle loading
+    const submitButton = forgotForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = `${spinnerIcon} Đang gửi...`;
+    }
+    try {
+        const formData = new FormData(forgotForm);
+        const result = await authService.forgotPassword(formData);
+        if (result.success) {
+            toastManager.createToast({
+                message: result.message,
+                type: "success",
+            });
+            forgotForm.reset();
+        }
+        else {
+            toastManager.createToast({
+                message: result.message,
+                type: "error",
+            });
+        }
+    }
+    catch (error) {
+        console.log(error);
+    }
+    finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Gửi";
+        }
+    }
+});

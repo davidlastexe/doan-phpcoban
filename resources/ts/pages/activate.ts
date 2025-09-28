@@ -1,5 +1,5 @@
 import { AppConfig } from "../app.js";
-import type { DefaultResponse } from "../type.js";
+import { authService } from "../services/auth-service.js";
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);
@@ -13,15 +13,9 @@ try {
   if (token) {
     const formData = new FormData();
     formData.append("token", token);
-    const url = `${AppConfig.baseUrl}/api/activate`;
-
-    const result: DefaultResponse<null> = await fetch(url, {
-      method: "post",
-      body: formData,
-    }).then((res) => res.json());
+    const result = await authService.activateAccount(formData);
 
     if (result.success) {
-      activateNoti.textContent = result.message;
       const anchorEle = document.createElement("a");
       const btnLogin = document.createElement("button");
 
@@ -33,7 +27,8 @@ try {
       anchorEle.appendChild(btnLogin);
 
       activateNoti.after(anchorEle);
-    } else activateNoti.textContent = result.message;
+    }
+    activateNoti.textContent = result.message;
   } else activateNoti.textContent = "Token xác thực không được cung cấp.";
 } catch (error) {
   console.log(error);

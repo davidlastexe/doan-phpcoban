@@ -2,6 +2,8 @@
 namespace App\Models;
 
 use App\Core\Database;
+use DateInterval;
+use DateTime;
 
 class User {
   private $db;
@@ -12,12 +14,27 @@ class User {
 
   // IDEA: thêm construct có tham số là email user hoặc id
 
-  public function emailExists($email) {
+  public function emailExists(string $email) {
     $count = $this->db->countRows("SELECT id FROM `users` WHERE `email` = ?", [$email]);
     return $count > 0;
   }
 
-  public function createUser($data) {
+  public function createUser(array $formData, string $emailVerificationToken) {
+    $now = new DateTime();
+    $expiresAt = $now->add(new DateInterval('PT30M'));
+    $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
+
+    $data = [
+      'full_name' => $formData['full_name'],
+      'email' => $formData['email'],
+      'password' => password_hash($formData['password'], PASSWORD_DEFAULT),
+      'email_verification_token' => $emailVerificationToken,
+      'verification_expires_at' => $expiresAtFormatted,
+    ];
+    if (!empty($formData['phone_number'])) {
+      $data['phone_number'] = $formData['phone_number'];
+    }
+
     return $this->db->insert('users', $data);
   }
 
@@ -35,7 +52,14 @@ class User {
     return $this->db->getOne($sql, ['token' => $token]);
   }
 
-  public function activateUserAccount(int $userId) {
+  public function findUserByForgotPasswordToken(string $token) {
+    $sql = "SELECT `id` FROM `users`
+            WHERE `forgot_password_token` = :token
+            AND `forgot_password_expires_at` > NOW()";
+    return $this->db->getOne($sql, ['token' => $token]);
+  }
+
+  public function activateAccount(int $userId) {
     $data = [
       'is_activated' => 1,
       'email_verification_token' => null,
@@ -90,5 +114,26 @@ class User {
      * 2. lấy id của role và $userId insert vào bảng role_user
      * 3. trả về true or false
      */
+  }
+
+  public function setForgotPasswordToken(int $userId, string $forgotPasswordToken) {
+    $now = new DateTime();
+    $expiresAt = $now->add(new DateInterval('PT5M'));
+    $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
+    $data = [
+      'forgot_password_token' => $forgotPasswordToken,
+      'forgot_password_expires_at' => $expiresAtFormatted
+    ];
+    return $this->db->update('users', $data, "`id` = :id", ['id' => $userId]);
+  }
+
+  public function resetPassword(int $userId, string $newPassword) {
+    $data = [
+      'password' => password_hash($newPassword, PASSWORD_DEFAULT),
+      'is_activated' => 1,
+      'forgot_password_token' => null,
+      'forgot_password_expires_at' => null
+    ];
+    return $this->db->update('users', $data, "`id` = :id", ['id' => $userId]);
   }
 }

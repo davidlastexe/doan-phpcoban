@@ -25,6 +25,8 @@
   border-radius: 8px;
   box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
   font-size: 15px;
+  max-width: 448px;
+  text-align: center;
 
   opacity: 0;
   transform: translateY(-100%);

@@ -124,9 +124,9 @@ class Helpers {
     }
   }
 
-  public static function sendJsonResponse(bool $success, string $message, ?array $data = null, int $httpCode = 200) {
+  // ?array: ? == Nullable Types
+  public static function sendJsonResponse(bool $success, string $message, ?array $payload = null, int $httpCode = 200) {
     header('Content-Type: application/json');
-
     http_response_code($httpCode);
 
     $response = [
@@ -134,8 +134,11 @@ class Helpers {
       'message' => $message,
     ];
 
-    if ($data !== null) {
-      $response['data'] = $data;
+    if ($payload !== null) {
+      if ($success)
+        $response['data'] = $payload;
+      else
+        $response['errors'] = $payload;
     }
 
     echo json_encode($response);

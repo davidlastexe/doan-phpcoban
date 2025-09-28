@@ -1,22 +1,13 @@
 <!DOCTYPE html>
 <html lang="vi">
 
-<head>
-  <meta charset="UTF-8">
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0"
-  >
-  <title>Kích hoạt tài khoản</title>
-</head>
-
 <body
   style="font-family: Arial, sans-serif; line-height: 1.6; color: #333; background-color: #f4f4f4; margin: 0; padding: 20px;"
 >
   <div
     style="max-width: 600px; margin: 0 auto; background-color: #fff; padding: 30px; border-radius: 10px; box-shadow: 0 4px 10px rgba(0,0,0,0.1);"
   >
-    <h2 style="color: #0056b3; text-align: center; margin-top: 0;">Chào mừng bạn đến với Ăn Vặt Shop!</h2>
+    <h2 style="text-align: center; margin-top: 0;">Chào mừng bạn đến với Ăn Vặt Shop!</h2>
 
     <p>Chào <strong><?php echo $formData['full_name']; ?></strong>,</p>
     <p>Cảm ơn bạn đã tin tưởng và đăng ký tài khoản tại cửa hàng của chúng tôi. Chỉ còn một bước cuối cùng nữa thôi!</p>

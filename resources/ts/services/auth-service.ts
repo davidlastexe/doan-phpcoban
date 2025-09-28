@@ -1,5 +1,5 @@
 import { AppConfig } from "../app.js";
-import type { DefaultResponse, LoginResponse } from "../type.js";
+import type { ApiResponse, LoginResponse } from "../type.js";
 
 class AuthService {
   private accessToken: string | null = null;
@@ -12,10 +12,10 @@ class AuthService {
   async checkEmailExists(email: string) {
     const url = `${AppConfig.baseUrl}/api/check-email?email=${email}`;
     try {
-      const result: DefaultResponse<{ exists?: boolean }> = await fetch(
-        url
-      ).then((res) => res.json());
-      if (result.data) return result.data.exists;
+      const result: ApiResponse<{ exists: boolean }> = await fetch(url).then(
+        (res) => res.json()
+      );
+      if (result.success) return result.data.exists;
       return false;
     } catch (error) {
       console.error(error);
@@ -29,7 +29,18 @@ class AuthService {
   async register(formData: FormData) {
     const url = `${AppConfig.baseUrl}/api/register`;
 
-    const result: DefaultResponse<{ errors?: string[][] }> = await fetch(url, {
+    const result: ApiResponse<null> = await fetch(url, {
+      method: "post",
+      body: formData,
+    }).then((res) => res.json());
+
+    return result;
+  }
+
+  async activateAccount(formData: FormData) {
+    const url = `${AppConfig.baseUrl}/api/activate`;
+
+    const result: ApiResponse<null> = await fetch(url, {
       method: "post",
       body: formData,
     }).then((res) => res.json());
@@ -40,7 +51,7 @@ class AuthService {
   async login(formData: FormData) {
     const url = `${AppConfig.baseUrl}/api/login`;
 
-    const result: DefaultResponse<LoginResponse> = await fetch(url, {
+    const result: ApiResponse<LoginResponse> = await fetch(url, {
       method: "post",
       body: formData,
     }).then((res) => res.json());
@@ -49,6 +60,28 @@ class AuthService {
       this.accessToken = result.data.access_token;
       localStorage.setItem("access_token", result.data.access_token);
     }
+    return result;
+  }
+
+  async forgotPassword(formData: FormData) {
+    const url = `${AppConfig.baseUrl}/api/forgot-password`;
+
+    const result: ApiResponse<null> = await fetch(url, {
+      method: "post",
+      body: formData,
+    }).then((res) => res.json());
+
+    return result;
+  }
+
+  async resetPassword(formData: FormData) {
+    const url = `${AppConfig.baseUrl}/api/reset-password`;
+
+    const result: ApiResponse<null> = await fetch(url, {
+      method: "post",
+      body: formData,
+    }).then((res) => res.json());
+
     return result;
   }
 

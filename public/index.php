@@ -1,7 +1,7 @@
 <?php
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 session_start();
-ob_start();
+ob_start(); // lưu toàn bộ vào bộ nhớ đệm
 
 require_once __DIR__.'/../vendor/autoload.php';
 
@@ -27,6 +27,7 @@ $router->get('/activate', AuthController::class, 'showActivatePage', ['guest']);
 $router->get('/login', AuthController::class, 'showLoginPage', ['guest']);
 $router->get('/register', AuthController::class, 'showRegisterPage', ['guest']);
 $router->get('/forgot-password', AuthController::class, 'showForgotPasswordPage', ['guest']);
+$router->get('/reset-password', AuthController::class, 'showResetPasswordPage', ['guest']);
 
 // Route đã login
 $router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
@@ -35,9 +36,11 @@ $router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
 $router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
 
 // API chưa login
-$router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['guest']);
+$router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['sanitize','guest']);
 $router->post('/api/register', ApiAuthController::class, 'handleRegister', ['sanitize', 'guest']);
 $router->post('/api/login', ApiAuthController::class, 'handleLogin', ['sanitize', 'guest']);
+$router->post('/api/forgot-password', ApiAuthController::class, 'handleForgotPassword', ['sanitize', 'guest']);
+$router->post('/api/reset-password', ApiAuthController::class, 'handleResetPassword', ['sanitize', 'guest']);
 
 // API yêu cầu phải đăng nhập
 // $router->get('/api/user/profile', [Api\UserController::class, 'getProfile'], ['auth']);
@@ -52,4 +55,4 @@ $finalPath = Helpers::removePathFolder($requestPath);
 
 $router->dispatch($finalPath, $requestMethod);
 
-ob_end_flush();
+ob_end_flush(); // gửi (flush) toàn bộ ra trình duyệt và dọn dẹp bộ nhớ đệm

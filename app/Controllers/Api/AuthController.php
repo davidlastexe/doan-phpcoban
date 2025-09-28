@@ -71,34 +71,19 @@ class AuthController {
 
     if (!empty($errors)) {
       // Mã 422 (Unprocessable Entity) là mã chuẩn cho lỗi validation
-      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['errors' => $errors], 422);
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', $errors, 422);
     }
 
     $emailVerificationToken = bin2hex(random_bytes(32));
-    $now = new DateTime();
-    $expiresAt = $now->add(new DateInterval('PT30M'));
-    $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
-
-    $dataToInsert = [
-      'full_name' => $formData['full_name'],
-      'email' => $formData['email'],
-      'password' => password_hash($formData['password'], PASSWORD_DEFAULT),
-      'email_verification_token' => $emailVerificationToken,
-      'verification_expires_at' => $expiresAtFormatted,
-    ];
-    if (!empty($formData['phone_number'])) {
-      $dataToInsert['phone_number'] = $formData['phone_number'];
-    }
-
-    if (!$userModel->createUser($dataToInsert)) {
+    if (!$userModel->createUser($formData, $emailVerificationToken)) {
       // Mã 500 (Internal Server Error) cho lỗi từ phía server (ví dụ: lỗi database)
       Helpers::sendJsonResponse(false, 'Đăng ký thất bại do lỗi hệ thống. Vui lòng thử lại!', null, 500);
     }
 
     $activationLink = _HOST_URL."/activate?token=$emailVerificationToken";
-    $subject = "Xác nhận email và kích hoạt tài khoản Ăn Vặt Shop";
+    $subject = "Xác nhận email và kích hoạt tài khoản - Ăn Vặt Shop";
     ob_start();
-    require_once _PATH_URL_VIEWS.'/pages/email-content.php';
+    require_once _PATH_URL_VIEWS.'/pages/activate-email-content.php';
     $content = ob_get_clean();
 
     Helpers::sendMail($formData['email'], $subject, $content);
@@ -204,22 +189,98 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
     }
 
-    $token = $_POST['token'] ?? null;
-
-    if (!$token)
+    if (!$_POST['token'])
       Helpers::sendJsonResponse(false, 'Token xác thực không được cung cấp.', null, 400);// 400 bad request
 
     $userModel = new User();
-    $user = $userModel->findUserByEmailVeriToken($token);
+    $user = $userModel->findUserByEmailVeriToken($_POST['token']);
+    if (!$user)
+      Helpers::sendJsonResponse(false, 'Token kích hoạt không hợp lệ hoặc đã hết hạn.', null, 400);
 
-    if ($user) {
-      $isActivated = $userModel->activateUserAccount($user['id']);
+    $isActivated = $userModel->activateAccount($user['id']);
+    if (!$isActivated)
+      Helpers::sendJsonResponse(false, 'Có lỗi xảy ra trong quá trình kích hoạt.', null, 500); // 500 internal server error
 
-      if ($isActivated)
-        Helpers::sendJsonResponse(true, 'Tài khoản đã được kích hoạt thành công.');
-      else
-        Helpers::sendJsonResponse(false, 'Có lỗi xảy ra trong quá trình kích hoạt.', null, 500); // 500 internal server error
-    } else
-      Helpers::sendJsonResponse(false, 'Link kích hoạt không hợp lệ hoặc đã hết hạn.', null, 400);
+    Helpers::sendJsonResponse(true, 'Tài khoản đã được kích hoạt thành công.');
+  }
+
+  public function handleForgotPassword() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
+    $formData = $_POST;
+    $errors = [];
+
+    // Validate email
+    if (empty($formData['email']))
+      $errors['email'][] = "Email không được bỏ trống!";
+    else if (!Helpers::validateEmail($formData['email']))
+      $errors['email'][] = "Email không hợp lệ!";
+
+    if (!empty($errors)) {
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', $errors, 422);
+    }
+
+    $userModel = new User();
+    $user = $userModel->findUserByEmail($formData['email']);
+
+    if (!$user) {
+      Helpers::sendJsonResponse(false, 'Email chưa được đăng ký hoặc không chính xác.', null, 401); // 401 Unauthorized => lỗi xác thực
+    }
+
+    $forgotPasswordToken = bin2hex(random_bytes(32));
+    $isTokenSet = $userModel->setForgotPasswordToken($user['id'], $forgotPasswordToken);
+    if (!$isTokenSet)
+      Helpers::sendJsonResponse(false, 'Có lỗi hệ thống xảy ra, xin vui lòng thử lại sau!', null, 500);
+
+    $forgotPasswordLink = _HOST_URL."/reset-password?token=$forgotPasswordToken";
+    $subject = "Yêu cầu đặt lại mật khẩu - Ăn Vặt Shop";
+    ob_start();
+    require_once _PATH_URL_VIEWS.'/pages/forgot-pw-email-content.php';
+    $content = ob_get_clean();
+
+    Helpers::sendMail($formData['email'], $subject, $content);
+
+    Helpers::sendJsonResponse(true, 'Vui lòng kiểm tra email để đặt lại mật khẩu.', null, 200);
+  }
+
+  public function handleResetPassword() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
+    $errors = [];
+
+    if (!$_POST['token'])
+      Helpers::sendJsonResponse(false, 'Token xác thực không được cung cấp.', null, 400);// 400 bad request
+
+    // Validate password
+    if (empty($_POST['new_password']))
+      $errors['new_password'][] = "Mật khẩu không được để trống!";
+    else if (strlen($_POST['new_password']) < 6)
+      $errors['new_password'][] = "Mật khẩu phải lớn hơn 6 ký tự!";
+
+    // Validate confirm_password
+    if (empty($_POST['confirm_password']))
+      $errors['confirm_password'][] = "Hãy nhập lại mật khẩu!";
+    else if ($_POST['confirm_password'] !== $_POST['new_password'])
+      $errors['confirm_password'][] = "Mật khẩu không khớp!";
+
+    if (!empty($errors)) {
+      // Mã 422 (Unprocessable Entity) là mã chuẩn cho lỗi validation
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', $errors, 422);
+    }
+
+    $userModel = new User();
+    $user = $userModel->findUserByForgotPasswordToken($_POST['token']);
+    if (!$user) {
+      Helpers::sendJsonResponse(false, 'Token đã hết hạn hoặc không chính xác.', null, 401); // 401 Unauthorized => lỗi xác thực
+    }
+
+    $isResetPassword = $userModel->resetPassword($user['id'], $_POST['new_password']);
+    if (!$isResetPassword) Helpers::sendJsonResponse(false, 'Có lỗi xảy ra trong quá trình đặt lại mật khẩu.', null, 500); // 500 internal server error
+
+    Helpers::sendJsonResponse(true, 'Tài khoản đã được đặt lại mật khẩu thành công.');
   }
 }

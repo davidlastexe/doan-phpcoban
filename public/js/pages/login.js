@@ -6,6 +6,7 @@ import { authService } from "../services/auth-service.js";
 import { toastManager } from "../toast-manager.js";
 const loginForm = document.getElementById("login-form");
 const inputs = loginForm.querySelectorAll("[data-field]");
+// TODO: hàm được dùng nhiều nơi nên xây dựng thành class helper
 async function validateField(input) {
     const fieldName = input.name;
     const value = input.value?.trim();
