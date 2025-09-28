@@ -1,15 +1,14 @@
 import { AppConfig } from "../app.js";
 import { isPhone, validateEmail } from "../auth-functions.js";
-import { clearError, displayError, showToast } from "../functions.js";
+import { spinnerIcon } from "../constants.js";
+import { clearError, displayError } from "../functions.js";
 import { authService } from "../services/auth-service.js";
+import { toastManager } from "../toast-manager.js";
 import type { DefaultResponse } from "../type.js";
 
 const registerForm = document.getElementById(
   "register-form"
 ) as HTMLFormElement;
-const registerToast = document.getElementById(
-  "register-toast"
-) as HTMLDivElement;
 const inputs = registerForm.querySelectorAll<HTMLInputElement>("[data-field]");
 
 async function validateField(input: HTMLInputElement): Promise<boolean> {
@@ -81,6 +80,14 @@ registerForm.addEventListener("submit", async (event: SubmitEvent) => {
 
   if (!isFormValid) return;
 
+  const submitButton = registerForm.querySelector<HTMLButtonElement>(
+    'button[type="submit"]'
+  );
+  if (submitButton) {
+    submitButton.disabled = true;
+    submitButton.innerHTML = `${spinnerIcon} Đang đăng ký...`;
+  }
+
   try {
     const formData = new FormData(registerForm);
     const url = `${AppConfig.baseUrl}/api/register`;
@@ -91,8 +98,7 @@ registerForm.addEventListener("submit", async (event: SubmitEvent) => {
     }).then((res) => res.json());
 
     if (result.success) {
-      showToast({
-        toastContainer: registerToast,
+      toastManager.createToast({
         message: result.message,
         type: "success",
       });
@@ -102,5 +108,14 @@ registerForm.addEventListener("submit", async (event: SubmitEvent) => {
     }
   } catch (error) {
     console.log(error);
+    toastManager.createToast({
+      message: "Lỗi kết nối máy chủ!",
+      type: "error",
+    });
+  } finally {
+    if (submitButton) {
+      submitButton.disabled = false;
+      submitButton.innerHTML = "Đăng ký";
+    }
   }
 });

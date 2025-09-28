@@ -9,11 +9,6 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
 
 <body>
   <div class="container mx-auto grid h-screen place-items-center">
-    <div
-      id="login-toast"
-      class="toast toast-top toast-center"
-    >
-    </div>
     <form
       id="login-form"
       novalidate

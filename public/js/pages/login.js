@@ -1,10 +1,10 @@
 import { AppConfig } from "../app.js";
 import { validateEmail } from "../auth-functions.js";
 import { spinnerIcon } from "../constants.js";
-import { clearError, displayError, showToast } from "../functions.js";
+import { clearError, displayError } from "../functions.js";
 import { authService } from "../services/auth-service.js";
+import { toastManager } from "../toast-manager.js";
 const loginForm = document.getElementById("login-form");
-const loginToast = document.getElementById("login-toast");
 const inputs = loginForm.querySelectorAll("[data-field]");
 async function validateField(input) {
     const fieldName = input.name;
@@ -42,6 +42,7 @@ loginForm.addEventListener("submit", async (event) => {
     isFormValid = results.every((isValid) => isValid);
     if (!isFormValid)
         return;
+    // TODO: tạo hệ thống hoặc gì đó giúp tối ưu handle loading
     const submitButton = loginForm.querySelector('button[type="submit"]');
     if (submitButton) {
         submitButton.disabled = true;
@@ -51,8 +52,7 @@ loginForm.addEventListener("submit", async (event) => {
         const formData = new FormData(loginForm);
         const result = await authService.login(formData);
         if (result.success && result.data) {
-            showToast({
-                toastContainer: loginToast,
+            toastManager.createToast({
                 message: result.message,
                 type: "success",
             });
@@ -60,8 +60,7 @@ loginForm.addEventListener("submit", async (event) => {
             loginForm.reset();
         }
         else {
-            showToast({
-                toastContainer: loginToast,
+            toastManager.createToast({
                 message: result.message,
                 type: "error",
             });
@@ -69,8 +68,7 @@ loginForm.addEventListener("submit", async (event) => {
     }
     catch (error) {
         console.log(error);
-        showToast({
-            toastContainer: loginToast,
+        toastManager.createToast({
             message: "Lỗi kết nối máy chủ!",
             type: "error",
         });

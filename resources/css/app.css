@@ -42,10 +42,10 @@
 .custom-toast.error {
   background-color: #dc3545;
 }
-.toast.info {
+.custom-toast.info {
   background-color: #17a2b8;
 }
-.toast.warning {
+.custom-toast.warning {
   background-color: #ffc107;
   color: #333;
 }

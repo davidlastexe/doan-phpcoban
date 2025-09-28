@@ -1,9 +1,10 @@
 import { AppConfig } from "../app.js";
 import { isPhone, validateEmail } from "../auth-functions.js";
-import { clearError, displayError, showToast } from "../functions.js";
+import { spinnerIcon } from "../constants.js";
+import { clearError, displayError } from "../functions.js";
 import { authService } from "../services/auth-service.js";
+import { toastManager } from "../toast-manager.js";
 const registerForm = document.getElementById("register-form");
-const registerToast = document.getElementById("register-toast");
 const inputs = registerForm.querySelectorAll("[data-field]");
 async function validateField(input) {
     const fieldName = input.name;
@@ -64,6 +65,11 @@ registerForm.addEventListener("submit", async (event) => {
     isFormValid = results.every((isValid) => isValid);
     if (!isFormValid)
         return;
+    const submitButton = registerForm.querySelector('button[type="submit"]');
+    if (submitButton) {
+        submitButton.disabled = true;
+        submitButton.innerHTML = `${spinnerIcon} Đang đăng ký...`;
+    }
     try {
         const formData = new FormData(registerForm);
         const url = `${AppConfig.baseUrl}/api/register`;
@@ -72,8 +78,7 @@ registerForm.addEventListener("submit", async (event) => {
             body: formData,
         }).then((res) => res.json());
         if (result.success) {
-            showToast({
-                toastContainer: registerToast,
+            toastManager.createToast({
                 message: result.message,
                 type: "success",
             });
@@ -85,5 +90,15 @@ registerForm.addEventListener("submit", async (event) => {
     }
     catch (error) {
         console.log(error);
+        toastManager.createToast({
+            message: "Lỗi kết nối máy chủ!",
+            type: "error",
+        });
+    }
+    finally {
+        if (submitButton) {
+            submitButton.disabled = false;
+            submitButton.innerHTML = "Đăng ký";
+        }
     }
 });

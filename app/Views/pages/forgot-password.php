@@ -8,8 +8,6 @@ Helpers::layout("head", ["title" => "Quên mật khẩu"]);
 
 <body>
   <div class="container mx-auto grid h-screen place-items-center">
-    <div class="toast toast-top toast-center">
-    </div>
     <form
       id="forgot-form"
       novalidate
