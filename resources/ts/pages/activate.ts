@@ -1,5 +1,5 @@
-import { FULL_URL } from "../app.js";
-import { authService } from "../services/auth-service.js";
+import { FULL_URL } from "../app";
+import { authService } from "../services/auth-service";
 
 const queryString = window.location.search;
 const urlParams = new URLSearchParams(queryString);

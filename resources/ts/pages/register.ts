@@ -1,8 +1,8 @@
-import { isPhone, validateEmail } from "../auth-functions.js";
-import { spinnerIcon } from "../constants.js";
-import { clearError, displayError } from "../functions.js";
-import { authService } from "../services/auth-service.js";
-import { toastManager } from "../toast-manager.js";
+import { isPhone, validateEmail } from "../utils/auth-functions";
+import { spinnerIcon } from "../utils/constants";
+import { clearError, displayError } from "../utils/functions";
+import { authService } from "../services/auth-service";
+import { toastManager } from "../toast-manager";
 
 const registerForm = document.getElementById(
   "register-form"

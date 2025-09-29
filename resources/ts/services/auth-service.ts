@@ -1,5 +1,5 @@
-import { FULL_URL } from "../app.js";
-import type { ApiResponse, LoginResponse } from "../type.js";
+import { FULL_URL } from "../app";
+import type { ApiResponse, LoginResponse } from "../type";
 
 class AuthService {
   private accessToken: string | null = null;

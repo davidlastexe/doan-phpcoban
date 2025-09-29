@@ -1,9 +1,9 @@
-import { FULL_URL } from "../app.js";
-import { validateEmail } from "../auth-functions.js";
-import { spinnerIcon } from "../constants.js";
-import { clearError, displayError } from "../functions.js";
-import { authService } from "../services/auth-service.js";
-import { toastManager } from "../toast-manager.js";
+import { FULL_URL } from "../app";
+import { validateEmail } from "../utils/auth-functions";
+import { spinnerIcon } from "../utils/constants";
+import { clearError, displayError } from "../utils/functions";
+import { authService } from "../services/auth-service";
+import { toastManager } from "../toast-manager";
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
 const inputs = loginForm.querySelectorAll<HTMLInputElement>("[data-field]");
