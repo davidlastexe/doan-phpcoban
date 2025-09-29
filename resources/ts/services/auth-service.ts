@@ -1,4 +1,4 @@
-import { AppConfig } from "../app.js";
+import { FULL_URL } from "../app.js";
 import type { ApiResponse, LoginResponse } from "../type.js";
 
 class AuthService {
@@ -10,7 +10,7 @@ class AuthService {
   }
 
   async checkEmailExists(email: string) {
-    const url = `${AppConfig.baseUrl}/api/check-email?email=${email}`;
+    const url = `${FULL_URL}/api/check-email?email=${email}`;
     try {
       const result: ApiResponse<{ exists: boolean }> = await fetch(url).then(
         (res) => res.json()
@@ -27,7 +27,7 @@ class AuthService {
   }
 
   async register(formData: FormData) {
-    const url = `${AppConfig.baseUrl}/api/register`;
+    const url = `${FULL_URL}/api/register`;
 
     const result: ApiResponse<null> = await fetch(url, {
       method: "post",
@@ -38,7 +38,7 @@ class AuthService {
   }
 
   async activateAccount(formData: FormData) {
-    const url = `${AppConfig.baseUrl}/api/activate`;
+    const url = `${FULL_URL}/api/activate`;
 
     const result: ApiResponse<null> = await fetch(url, {
       method: "post",
@@ -49,7 +49,7 @@ class AuthService {
   }
 
   async login(formData: FormData) {
-    const url = `${AppConfig.baseUrl}/api/login`;
+    const url = `${FULL_URL}/api/login`;
 
     const result: ApiResponse<LoginResponse> = await fetch(url, {
       method: "post",
@@ -64,7 +64,7 @@ class AuthService {
   }
 
   async forgotPassword(formData: FormData) {
-    const url = `${AppConfig.baseUrl}/api/forgot-password`;
+    const url = `${FULL_URL}/api/forgot-password`;
 
     const result: ApiResponse<null> = await fetch(url, {
       method: "post",
@@ -75,7 +75,7 @@ class AuthService {
   }
 
   async resetPassword(formData: FormData) {
-    const url = `${AppConfig.baseUrl}/api/reset-password`;
+    const url = `${FULL_URL}/api/reset-password`;
 
     const result: ApiResponse<null> = await fetch(url, {
       method: "post",

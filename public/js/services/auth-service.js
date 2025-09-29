@@ -1,4 +1,4 @@
-import { AppConfig } from "../app.js";
+import { FULL_URL } from "../app.js";
 class AuthService {
     accessToken = null;
     refreshTokenPromise = null;
@@ -6,7 +6,7 @@ class AuthService {
         this.accessToken = localStorage.getItem("access_token");
     }
     async checkEmailExists(email) {
-        const url = `${AppConfig.baseUrl}/api/check-email?email=${email}`;
+        const url = `${FULL_URL}/api/check-email?email=${email}`;
         try {
             const result = await fetch(url).then((res) => res.json());
             if (result.success)
@@ -21,7 +21,7 @@ class AuthService {
         return this.accessToken !== null;
     }
     async register(formData) {
-        const url = `${AppConfig.baseUrl}/api/register`;
+        const url = `${FULL_URL}/api/register`;
         const result = await fetch(url, {
             method: "post",
             body: formData,
@@ -29,7 +29,7 @@ class AuthService {
         return result;
     }
     async activateAccount(formData) {
-        const url = `${AppConfig.baseUrl}/api/activate`;
+        const url = `${FULL_URL}/api/activate`;
         const result = await fetch(url, {
             method: "post",
             body: formData,
@@ -37,7 +37,7 @@ class AuthService {
         return result;
     }
     async login(formData) {
-        const url = `${AppConfig.baseUrl}/api/login`;
+        const url = `${FULL_URL}/api/login`;
         const result = await fetch(url, {
             method: "post",
             body: formData,
@@ -49,7 +49,7 @@ class AuthService {
         return result;
     }
     async forgotPassword(formData) {
-        const url = `${AppConfig.baseUrl}/api/forgot-password`;
+        const url = `${FULL_URL}/api/forgot-password`;
         const result = await fetch(url, {
             method: "post",
             body: formData,
@@ -57,7 +57,7 @@ class AuthService {
         return result;
     }
     async resetPassword(formData) {
-        const url = `${AppConfig.baseUrl}/api/reset-password`;
+        const url = `${FULL_URL}/api/reset-password`;
         const result = await fetch(url, {
             method: "post",
             body: formData,

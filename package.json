@@ -5,19 +5,27 @@
   "scripts": {
     "serve:typescript": "bunx tsc --watch",
     "serve:tailwindcss": "bun run build-tailwind-all.js",
-    "dev": "concurrently \"bun:serve:tailwindcss\" \"bun:serve:typescript\""
+    "dev": "concurrently \"bun:serve:tailwindcss\" \"bun:serve:typescript\"",
+    "build": "webpack --mode=production"
   },
   "dependencies": {
     "@tailwindcss/cli": "^4.1.13",
     "concurrently": "^9.2.1",
-    "tailwindcss": "^4.1.13"
+    "javascript-obfuscator": "^4.1.1",
+    "tailwindcss": "^4.1.13",
+    "ts-loader": "^9.5.4",
+    "webpack": "^5.101.3",
+    "webpack-cli": "^6.0.1",
+    "webpack-obfuscator": "^3.5.1"
   },
   "devDependencies": {
     "@types/bun": "latest",
-    "daisyui": "^5.1.17",
+    "daisyui": "^5.1.25",
     "typescript": "^5.9.2"
   },
   "trustedDependencies": [
-    "@tailwindcss/oxide"
+    "@parcel/watcher",
+    "@tailwindcss/oxide",
+    "javascript-obfuscator"
   ]
 }

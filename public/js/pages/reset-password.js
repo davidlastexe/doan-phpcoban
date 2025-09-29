@@ -1,4 +1,4 @@
-import { AppConfig } from "../app.js";
+import { FULL_URL } from "../app.js";
 import { spinnerIcon } from "../constants.js";
 import { clearError, displayError } from "../functions.js";
 import { authService } from "../services/auth-service.js";
@@ -63,7 +63,7 @@ resetPasswordForm.addEventListener("submit", async (event) => {
             });
             const anchorEle = document.createElement("a");
             const btnLogin = document.createElement("button");
-            anchorEle.href = `${AppConfig.baseUrl}/login`;
+            anchorEle.href = `${FULL_URL}/login`;
             btnLogin.type = "button";
             btnLogin.classList.add("btn", "w-full");
             btnLogin.textContent = "Đến trang đăng nhập";

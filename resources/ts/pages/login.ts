@@ -1,4 +1,4 @@
-import { AppConfig } from "../app.js";
+import { FULL_URL } from "../app.js";
 import { validateEmail } from "../auth-functions.js";
 import { spinnerIcon } from "../constants.js";
 import { clearError, displayError } from "../functions.js";
@@ -73,7 +73,7 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
         type: "success",
       });
       window.location.href = `${
-        AppConfig.production ? "/" : AppConfig.projectName
+        FULL_URL
       }`;
       loginForm.reset();
     } else {

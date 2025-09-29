@@ -9,6 +9,4 @@
   <!--end::Primary Meta Tags-->
   <link rel="preload" href="./public/css/app.css" as="style" />
   <link rel="stylesheet" href="./public/css/app.css" />
-
-  <script type="module" src="./public/js/app.js"></script>
 </head>
