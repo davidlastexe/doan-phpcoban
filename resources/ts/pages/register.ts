@@ -1,8 +1,7 @@
-import { isPhone, validateEmail } from "../utils/auth-functions";
 import { spinnerIcon } from "../utils/constants";
-import { clearError, displayError } from "../utils/functions";
 import { authService } from "../services/auth-service";
 import { toastManager } from "../toast-manager";
+import { helpers } from "../utils/helpers";
 
 const registerForm = document.getElementById(
   "register-form"
@@ -14,7 +13,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  clearError(fieldName);
+  helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "full_name":
@@ -25,14 +24,14 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
 
     case "email":
       if (!value) errorMessage = "Email không được bỏ trống!";
-      else if (!validateEmail(value)) errorMessage = "Email không hợp lệ!";
+      else if (!helpers.validateEmail(value)) errorMessage = "Email không hợp lệ!";
       else if (await authService.checkEmailExists(value))
         errorMessage = "Email này đã được sử dụng!";
       break;
 
     case "phone_number":
       if (value) {
-        if (!isPhone(value)) errorMessage = "Số điện thoại không hợp lệ!";
+        if (!helpers.isPhone(value)) errorMessage = "Số điện thoại không hợp lệ!";
       }
       break;
 
@@ -52,7 +51,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   }
 
   if (errorMessage) {
-    displayError(fieldName, errorMessage);
+    helpers.displayError(fieldName, errorMessage);
     return false;
   }
   return true;

@@ -1,8 +1,8 @@
 import { FULL_URL } from "../app";
 import { spinnerIcon } from "../utils/constants";
-import { clearError, displayError } from "../utils/functions";
 import { authService } from "../services/auth-service";
 import { toastManager } from "../toast-manager";
+import { helpers } from "../utils/helpers";
 
 const resetPasswordForm = document.getElementById(
   "reset-password-form"
@@ -19,7 +19,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  clearError(fieldName);
+  helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "new_password":
@@ -38,7 +38,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   }
 
   if (errorMessage) {
-    displayError(fieldName, errorMessage);
+    helpers.displayError(fieldName, errorMessage);
     return true;
   }
   return true;

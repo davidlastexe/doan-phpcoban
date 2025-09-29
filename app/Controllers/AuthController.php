@@ -1,6 +1,7 @@
 <?php
 namespace App\Controllers;
 
+use App\Helpers\Helpers;
 use App\Models\User;
 
 class AuthController {
@@ -14,8 +15,7 @@ class AuthController {
 
   public function showActivatePage() {
     if (empty($_GET['token']))
-      // TODO: xây dựng hàm helper redirect
-      header("Location: {$_ENV['BASE_PROJECT_NAME']}");
+      Helpers::redirect();
 
     require_once _PATH_URL_VIEWS.'/pages/activate.php';
   }
@@ -26,7 +26,7 @@ class AuthController {
 
   public function showResetPasswordPage() {
     if (empty($_GET['token']))
-      header("Location: {$_ENV['BASE_PROJECT_NAME']}");
+      Helpers::redirect();
 
     $userModel = new User();
     $user = $userModel->findUserByForgotPasswordToken($_GET['token']);

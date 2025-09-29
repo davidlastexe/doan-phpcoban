@@ -144,4 +144,10 @@ class Helpers {
     echo json_encode($response);
     exit();
   }
+
+  public static function redirect(string $path = '') {
+    $url = _HOST_URL.$path;
+    header("Location: {$url}");
+    exit();
+  }
 }

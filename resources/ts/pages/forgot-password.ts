@@ -1,8 +1,7 @@
-import { validateEmail } from "../utils/auth-functions";
 import { spinnerIcon } from "../utils/constants";
-import { clearError, displayError } from "../utils/functions";
 import { authService } from "../services/auth-service";
 import { toastManager } from "../toast-manager";
+import { helpers } from "../utils/helpers";
 
 const forgotForm = document.getElementById("forgot-form") as HTMLFormElement;
 const inputs = forgotForm.querySelectorAll<HTMLInputElement>("[data-field]");
@@ -13,17 +12,17 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  clearError(fieldName);
+  helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "email":
       if (!value) errorMessage = "Email không được bỏ trống!";
-      else if (!validateEmail(value)) errorMessage = "Email không hợp lệ!";
+      else if (!helpers.validateEmail(value)) errorMessage = "Email không hợp lệ!";
       break;
   }
 
   if (errorMessage) {
-    displayError(fieldName, errorMessage);
+    helpers.displayError(fieldName, errorMessage);
     return false;
   }
   return true;
