@@ -82,7 +82,7 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/login.js"
+    src="./public/js/pages/auth/login.js"
   ></script>
 </body>
 

@@ -1,18 +1,12 @@
-import { FULL_URL } from "../app";
-import { spinnerIcon } from "../utils/constants";
-import { authService } from "../services/auth-service";
-import { toastManager } from "../toast-manager";
-import { helpers } from "../utils/helpers";
+import { spinnerIcon } from "../../utils/constants";
+import { authService } from "../../services/auth-service";
+import { toastManager } from "../../toast-manager";
+import { helpers } from "../../utils/helpers";
 
-const resetPasswordForm = document.getElementById(
-  "reset-password-form"
+const registerForm = document.getElementById(
+  "register-form"
 ) as HTMLFormElement;
-const inputs =
-  resetPasswordForm.querySelectorAll<HTMLInputElement>("[data-field]");
-
-const queryString = window.location.search;
-const urlParams = new URLSearchParams(queryString);
-const token = urlParams.get("token") as string;
+const inputs = registerForm.querySelectorAll<HTMLInputElement>("[data-field]");
 
 async function validateField(input: HTMLInputElement): Promise<boolean> {
   const fieldName = input.name;
@@ -22,7 +16,26 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   helpers.clearError(fieldName);
 
   switch (fieldName) {
-    case "new_password":
+    case "full_name":
+      if (!value) errorMessage = "Họ tên không được bỏ trống!";
+      else if (value.length < 5)
+        errorMessage = "Họ tên phải có ít nhất 5 ký tự!";
+      break;
+
+    case "email":
+      if (!value) errorMessage = "Email không được bỏ trống!";
+      else if (!helpers.validateEmail(value)) errorMessage = "Email không hợp lệ!";
+      else if (await authService.checkEmailExists(value))
+        errorMessage = "Email này đã được sử dụng!";
+      break;
+
+    case "phone_number":
+      if (value) {
+        if (!helpers.isPhone(value)) errorMessage = "Số điện thoại không hợp lệ!";
+      }
+      break;
+
+    case "password":
       if (!value) errorMessage = "Mật khẩu không được để trống!";
       else if (value.length < 6)
         errorMessage = "Mật khẩu phải lớn hơn 6 ký tự!";
@@ -30,7 +43,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
 
     case "confirm_password":
       const passwordInput =
-        resetPasswordForm.querySelector<HTMLInputElement>("[name='password']");
+        registerForm.querySelector<HTMLInputElement>("[name='password']");
       if (!value) errorMessage = "Hãy nhập lại mật khẩu!";
       else if (passwordInput && value !== passwordInput.value)
         errorMessage = "Mật khẩu không khớp!";
@@ -39,7 +52,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
 
   if (errorMessage) {
     helpers.displayError(fieldName, errorMessage);
-    return true;
+    return false;
   }
   return true;
 }
@@ -50,45 +63,38 @@ inputs.forEach((input) => {
   });
 });
 
-resetPasswordForm.addEventListener("submit", async (event: SubmitEvent) => {
+registerForm.addEventListener("submit", async (event: SubmitEvent) => {
   event.preventDefault();
 
   let isFormValid = true;
+
   const validationPromises = Array.from(inputs).map((input) =>
     validateField(input)
   );
   const results = await Promise.all(validationPromises);
+
   isFormValid = results.every((isValid) => isValid);
+
   if (!isFormValid) return;
 
-  const submitButton = resetPasswordForm.querySelector<HTMLButtonElement>(
+  const submitButton = registerForm.querySelector<HTMLButtonElement>(
     'button[type="submit"]'
   );
   if (submitButton) {
     submitButton.disabled = true;
-    submitButton.innerHTML = `${spinnerIcon} Đang xác nhận...`;
+    submitButton.innerHTML = `${spinnerIcon} Đang đăng ký...`;
   }
 
   try {
-    const formData = new FormData(resetPasswordForm);
-    formData.append("token", token);
-    const result = await authService.resetPassword(formData);
+    const formData = new FormData(registerForm);
+    const result = await authService.register(formData);
 
     if (result.success) {
       toastManager.createToast({
         message: result.message,
         type: "success",
       });
-      const anchorEle = document.createElement("a");
-      const btnLogin = document.createElement("button");
-
-      anchorEle.href = `${FULL_URL}/login`;
-      btnLogin.type = "button";
-      btnLogin.classList.add("btn", "w-full");
-      btnLogin.textContent = "Đến trang đăng nhập";
-      anchorEle.appendChild(btnLogin);
-
-      resetPasswordForm.replaceChildren(anchorEle);
+      registerForm.reset();
     } else {
       toastManager.createToast({
         message: result.message,
@@ -97,10 +103,14 @@ resetPasswordForm.addEventListener("submit", async (event: SubmitEvent) => {
     }
   } catch (error) {
     console.log(error);
+    toastManager.createToast({
+      message: "Lỗi kết nối máy chủ!",
+      type: "error",
+    });
   } finally {
     if (submitButton) {
       submitButton.disabled = false;
-      submitButton.innerHTML = "Xác nhận";
+      submitButton.innerHTML = "Đăng ký";
     }
   }
 });

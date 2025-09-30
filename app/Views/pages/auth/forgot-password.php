@@ -47,7 +47,7 @@ Helpers::layout("head", ["title" => "Quên mật khẩu"]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/forgot-password.js"
+    src="./public/js/pages/auth/forgot-password.js"
   ></script>
 </body>
 

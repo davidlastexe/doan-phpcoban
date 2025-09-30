@@ -135,7 +135,7 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/register.js"
+    src="./public/js/pages/auth/register.js"
   ></script>
 </body>
 

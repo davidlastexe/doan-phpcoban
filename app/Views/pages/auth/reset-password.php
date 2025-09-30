@@ -72,7 +72,7 @@ Helpers::layout("head", ["title" => "Đặt lại mật khẩu"]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/reset-password.js"
+    src="./public/js/pages/auth/reset-password.js"
   ></script>
 </body>
 

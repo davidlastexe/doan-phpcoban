@@ -1,7 +1,7 @@
-import { spinnerIcon } from "../utils/constants";
-import { authService } from "../services/auth-service";
-import { toastManager } from "../toast-manager";
-import { helpers } from "../utils/helpers";
+import { spinnerIcon } from "../../utils/constants";
+import { authService } from "../../services/auth-service";
+import { toastManager } from "../../toast-manager";
+import { helpers } from "../../utils/helpers";
 
 const forgotForm = document.getElementById("forgot-form") as HTMLFormElement;
 const inputs = forgotForm.querySelectorAll<HTMLInputElement>("[data-field]");

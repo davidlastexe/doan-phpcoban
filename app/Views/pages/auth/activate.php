@@ -17,7 +17,7 @@ Helpers::layout("head", ["title" => "Kích hoạt tài khoản"]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/activate.js"
+    src="./public/js/pages/auth/activate.js"
   ></script>
 </body>
 
