@@ -15,9 +15,16 @@ class Database {
       $dsn = sprintf($dsn_template, $_ENV["DB_DRIVER"], $_ENV["DB_HOST"], $_ENV["DB_PORT"], $_ENV["DB_DB"]);
       $this->connect = new PDO($dsn, $_ENV["DB_USER"], $_ENV["DB_PASS"], $options);
     } catch (Exception $ex) {
-      echo "Lỗi kết nối: ".$ex->getMessage();
+      $this->writeErrorLog($ex);
       exit();
     }
+  }
+
+  public function writeErrorLog(Exception $ex) {
+    $log_message = "Lỗi: ".$ex->getMessage()."\n";
+    $log_message .= "File: ".$ex->getFile()." Dòng: ".$ex->getLine()."\n";
+    $log_message .= "Stack Trace: \n".$ex->getTraceAsString();
+    error_log($log_message, 0);
   }
 
   public function getAll($sql, $params = []) {
@@ -26,7 +33,7 @@ class Database {
       $stm->execute($params);
       return $stm->fetchAll(PDO::FETCH_ASSOC);
     } catch (PDOException $ex) {
-      echo "Error: {$ex->getMessage()}<br>";
+      $this->writeErrorLog($ex);
       return false;
     }
   }
@@ -37,7 +44,7 @@ class Database {
       $stm->execute($params);
       return $stm->rowCount();
     } catch (PDOException $ex) {
-      echo "Error: {$ex->getMessage()}<br>";
+      $this->writeErrorLog($ex);
       return false;
     }
   }
@@ -48,7 +55,7 @@ class Database {
       $stm->execute($params);
       return $stm->fetch(PDO::FETCH_ASSOC);
     } catch (PDOException $ex) {
-      echo "Error: {$ex->getMessage()}<br>";
+      $this->writeErrorLog($ex);
       return false;
     }
   }
@@ -57,7 +64,7 @@ class Database {
     try {
       return $this->connect->lastInsertId();
     } catch (PDOException $ex) {
-      echo "Error: {$ex->getMessage()}<br>";
+      $this->writeErrorLog($ex);
       return false;
     }
   }
@@ -72,10 +79,8 @@ class Database {
       $stm = $this->connect->prepare($sql);
       return $stm->execute($data);
     } catch (PDOException $ex) {
-      $log_message = "Lỗi nghiêm trọng: ".$ex->getMessage()."\n";
-      $log_message .= "File: ".$ex->getFile()." Dòng: ".$ex->getLine()."\n";
-      $log_message .= "Stack Trace: \n".$ex->getTraceAsString();
-      error_log($log_message, 0);
+      $this->writeErrorLog($ex);
+      return false;
     }
   }
 
@@ -88,7 +93,7 @@ class Database {
       $all_params = array_merge($data, $params_condition);
       return $stm->execute($all_params);
     } catch (PDOException $ex) {
-      echo "Lỗi kết nối: ".$ex->getMessage();
+      $this->writeErrorLog($ex);
       return false;
     }
   }
@@ -100,7 +105,7 @@ class Database {
       $stm = $this->connect->prepare($sql);
       return $stm->execute($params_condition);
     } catch (PDOException $ex) {
-      echo "Lỗi kết nối: ".$ex->getMessage();
+      $this->writeErrorLog($ex);
       return false;
     }
   }
