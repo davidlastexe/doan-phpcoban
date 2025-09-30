@@ -1,4 +1,4 @@
-command: tree -a -I "node_modules|vendor|.git|.vscode|doan-phpcoban.code-workspace"
+tree -a -I "node_modules|vendor|.git|.vscode|doan-phpcoban.code-workspace" > project_structure.txt
 .
 ├── .env
 ├── .gitignore
@@ -27,13 +27,19 @@ command: tree -a -I "node_modules|vendor|.git|.vscode|doan-phpcoban.code-workspa
 │   │   ├── RefreshToken.php
 │   │   └── User.php
 │   └── Views
+│       ├── emails
+│       │   ├── activate-email-content.php
+│       │   └── forgot-pw-email-content.php
 │       ├── layouts
 │       │   └── head.php
 │       └── pages
-│           ├── activate.php
-│           ├── email-content.php
-│           ├── login.php
-│           └── register.php
+│           ├── auth
+│           │   ├── activate.php
+│           │   ├── forgot-password.php
+│           │   ├── login.php
+│           │   ├── register.php
+│           │   └── reset-password.php
+│           └── home.php
 ├── build-tailwind-all.js
 ├── bun.lock
 ├── composer.json
@@ -51,31 +57,41 @@ command: tree -a -I "node_modules|vendor|.git|.vscode|doan-phpcoban.code-workspa
 │   │   └── app.css
 │   ├── index.php
 │   └── js
-│       ├── activate.js
 │       ├── app.js
-│       ├── auth-functions.js
-│       ├── constants.js
-│       ├── functions.js
-│       ├── login.js
-│       ├── register.js
+│       ├── pages
+│       │   └── auth
+│       │       ├── activate.js
+│       │       ├── forgot-password.js
+│       │       ├── login.js
+│       │       ├── register.js
+│       │       └── reset-password.js
 │       ├── services
-│       │   └── AuthService.js
-│       └── type.js
+│       │   └── auth-service.js
+│       ├── toast-manager.js
+│       ├── type.js
+│       └── utils
+│           ├── constants.js
+│           └── helpers.js
 ├── resources
 │   ├── css
 │   │   └── app.css
 │   └── ts
-│       ├── activate.ts
 │       ├── app.ts
-│       ├── auth-functions.ts
-│       ├── constants.ts
-│       ├── functions.ts
-│       ├── login.ts
-│       ├── register.ts
+│       ├── pages
+│       │   └── auth
+│       │       ├── activate.ts
+│       │       ├── forgot-password.ts
+│       │       ├── login.ts
+│       │       ├── register.ts
+│       │       └── reset-password.ts
 │       ├── services
-│       │   └── AuthService.ts
-│       └── type.ts
-├── tree_structure.txt
-└── tsconfig.json
+│       │   └── auth-service.ts
+│       ├── toast-manager.ts
+│       ├── type.ts
+│       └── utils
+│           ├── constants.ts
+│           └── helpers.ts
+├── tsconfig.json
+└── webpack.config.mjs
 
-21 directories, 57 files
+29 directories, 65 files

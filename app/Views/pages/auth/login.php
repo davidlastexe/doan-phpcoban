@@ -55,10 +55,12 @@ Helpers::layout("head", ["title" => "Đăng nhập"]);
             class="btn w-full"
           >Đăng nhập</button>
           <div>
-            <a
-              href="<?php echo _HOST_URL; ?>/forgot-password"
-              class="underline"
-            >Quên mật khẩu?</a>
+            <span>Quên mật khẩu?
+              <a
+                href="<?php echo _HOST_URL; ?>/forgot-password"
+                class="underline"
+              >Lấy lại mật khẩu</a>
+            </span>
           </div>
           <div>
             <span>Chưa có tài khoản?

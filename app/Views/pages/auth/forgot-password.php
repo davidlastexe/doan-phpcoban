@@ -15,10 +15,7 @@ Helpers::layout("head", ["title" => "Quên mật khẩu"]);
       <div class="flex flex-col mx-auto md:w-96 w-full">
         <h1 class="text-2xl font-bold mb-4 text-center">Quên mật khẩu</h1>
         <div class="flex flex-col gap-2 mb-4">
-          <label
-            for="email_phone_number"
-            class="required"
-          >Email / Số điện thoại</label>
+          <label for="email_phone_number">Email / Số điện thoại</label>
           <input
             name="email_phone_number"
             type="text"

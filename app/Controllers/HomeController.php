@@ -3,6 +3,6 @@ namespace App\Controllers;
 
 class HomeController {
   public function index() {
-    echo "<h1>đây là trang chủ</h1>";
+    require_once _PATH_URL_VIEWS.'/pages/home.php';
   }
 }

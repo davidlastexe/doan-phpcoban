@@ -16,8 +16,8 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
 
   switch (fieldName) {
     case "email_phone_number":
-      if (!value) return false;
-      if (Number(value)) {
+      if (!value) errorMessage = "Email / Số điện thoại không được bỏ trống!";
+      else if (Number(value)) {
         if (!helpers.isPhone(value))
           errorMessage = "Số điện thoại không hợp lệ!";
       } else if (!helpers.validateEmail(value))
