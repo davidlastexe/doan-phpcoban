@@ -156,7 +156,7 @@ class AuthController {
     $deviceLimit = intval($_ENV['DEVICE_LOGIN_LIMIT']) ?? 5;
     $currentTokenCount = $tokenModel->getTokenCountForUser($user['id']);
     if ($currentTokenCount >= $deviceLimit) {
-      $tokenModel->deleteOldestTokenForUser($user['id'], $deviceLimit - 1);
+      $tokenModel->deleteOldestTokenForUser($user['id']);
     }
 
     $refreshToken = bin2hex(random_bytes(32));

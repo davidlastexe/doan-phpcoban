@@ -27,14 +27,10 @@ class RefreshToken {
     return $this->db->countRows($sql, ['user_id' => $userId]);
   }
 
-  public function deleteOldestTokenForUser($userId, $deviceLimit) {
-    $condition = "`id` NOT IN (
-                    SELECT `id` FROM (
-                      SELECT `id` FROM `refresh_tokens`
-                      WHERE `user_id` = :user_id
-                      ORDER BY `created_at` DESC LIMIT $deviceLimit
-                    ) AS newest_refresh_tokens
-                  )";
+  public function deleteOldestTokenForUser($userId) {
+    $condition = "user_id = :user_id
+                  ORDER BY created_at
+                  LIMIT 1";
     return $this->db->delete('refresh_tokens', $condition, ['user_id' => $userId]);
   }
 }
