@@ -1,8 +1,12 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\View;
+
 class HomeController {
   public function index() {
-    require_once _PATH_URL_VIEWS.'/pages/home.php';
+    View::render('pages/home', [
+      'title' => 'Trang chủ'
+    ]);
   }
 }

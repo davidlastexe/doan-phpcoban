@@ -1,27 +1,36 @@
 <?php
 namespace App\Controllers;
 
+use App\Core\View;
 use App\Helpers\Helpers;
 use App\Models\User;
 
 class AuthController {
   public function showLoginPage() {
-    require_once _PATH_URL_VIEWS.'/pages/auth/login.php';
+    View::render('pages/auth/login', [
+      'title' => 'Đăng nhập'
+    ], 'layouts/auth');
   }
 
   public function showRegisterPage() {
-    require_once _PATH_URL_VIEWS.'/pages/auth/register.php';
+    View::render('pages/auth/register', [
+      'title' => 'Đăng ký'
+    ], 'layouts/auth');
   }
 
   public function showActivatePage() {
     if (empty($_GET['token']))
       Helpers::redirect();
 
-    require_once _PATH_URL_VIEWS.'/pages/auth/activate.php';
+    View::render('pages/auth/activate', [
+      'title' => 'Kích hoạt tài khoản'
+    ], 'layouts/auth');
   }
 
   public function showForgotPasswordPage() {
-    require_once _PATH_URL_VIEWS.'/pages/auth/forgot-password.php';
+    View::render('pages/auth/forgot-password', [
+      'title' => 'Quên mật khẩu'
+    ], 'layouts/auth');
   }
 
   public function showResetPasswordPage() {
@@ -31,6 +40,8 @@ class AuthController {
     $userModel = new User();
     $user = $userModel->findUserByForgotPasswordToken($_GET['token']);
 
-    require_once _PATH_URL_VIEWS.'/pages/auth/reset-password.php';
+    View::render('pages/auth/reset-password', [
+      'title' => 'Đặt lại mật khẩu'
+    ], 'layouts/auth');
   }
 }

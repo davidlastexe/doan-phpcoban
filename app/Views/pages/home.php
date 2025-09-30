@@ -2,8 +2,8 @@
 <html lang="en">
 
 <?php
-use App\Helpers\Helpers;
-Helpers::layout("head", ["title" => "Trang chủ"]);
+use App\Core\View;
+View::layout('head', ['title' => $title]);
 ?>
 
 <body>
@@ -49,6 +49,7 @@ Helpers::layout("head", ["title" => "Trang chủ"]);
           </div>
         </div>
       </div>
+
       <div class="dropdown dropdown-end">
         <div
           tabindex="0"

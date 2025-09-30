@@ -6,13 +6,6 @@ use PHPMailer\PHPMailer\SMTP;
 use PHPMailer\PHPMailer\Exception;
 
 class Helpers {
-  public static function layout($layoutName, $data = []) {
-    $name = _PATH_URL_VIEWS."/layouts/{$layoutName}.php";
-    if (file_exists($name)) {
-      require_once $name;
-    }
-  }
-
   public static function isPost() {
     return $_SERVER["REQUEST_METHOD"] === 'POST';
   }
