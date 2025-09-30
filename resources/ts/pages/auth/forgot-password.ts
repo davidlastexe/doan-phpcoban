@@ -17,7 +17,8 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   switch (fieldName) {
     case "email":
       if (!value) errorMessage = "Email không được bỏ trống!";
-      else if (!helpers.validateEmail(value)) errorMessage = "Email không hợp lệ!";
+      else if (!helpers.validateEmail(value))
+        errorMessage = "Email không hợp lệ!";
       break;
   }
 
@@ -65,6 +66,10 @@ forgotForm.addEventListener("submit", async (event: SubmitEvent) => {
         type: "success",
       });
       forgotForm.reset();
+    } else if (result.errors) {
+      Object.keys(result.errors).forEach((key) => {
+        helpers.displayError(key, result.errors![key]![0]!);
+      });
     } else {
       toastManager.createToast({
         message: result.message,

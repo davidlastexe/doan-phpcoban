@@ -18,7 +18,8 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   switch (fieldName) {
     case "email":
       if (!value) errorMessage = "Email không được bỏ trống!";
-      else if (!helpers.validateEmail(value)) errorMessage = "Email không hợp lệ!";
+      else if (!helpers.validateEmail(value))
+        errorMessage = "Email không hợp lệ!";
       break;
 
     case "password":
@@ -66,15 +67,17 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
     const formData = new FormData(loginForm);
     const result = await authService.login(formData);
 
-    if (result.success && result.data) {
+    if (result.success) {
       toastManager.createToast({
         message: result.message,
         type: "success",
       });
-      window.location.href = `${
-        FULL_URL
-      }`;
+      window.location.href = `${FULL_URL}`;
       loginForm.reset();
+    } else if (result.errors) {
+      Object.keys(result.errors).forEach((key) => {
+        helpers.displayError(key, result.errors![key]![0]!);
+      });
     } else {
       toastManager.createToast({
         message: result.message,

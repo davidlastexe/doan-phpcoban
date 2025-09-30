@@ -10,11 +10,30 @@ class AuthService {
   }
 
   async checkEmailExists(email: string) {
-    const url = `${FULL_URL}/api/check-email?email=${email}`;
+    const formData = new FormData();
+    formData.append("email", email);
+    const url = `${FULL_URL}/api/check-email`;
     try {
-      const result: ApiResponse<{ exists: boolean }> = await fetch(url).then(
-        (res) => res.json()
-      );
+      const result: ApiResponse<{ exists: boolean }> = await fetch(url, {
+        method: "post",
+        body: formData,
+      }).then((res) => res.json());
+      if (result.success) return result.data.exists;
+      return false;
+    } catch (error) {
+      console.error(error);
+    }
+  }
+
+  async checkPhoneNumberExists(phoneNumber: string) {
+    const formData = new FormData();
+    formData.append("phone_number", phoneNumber);
+    const url = `${FULL_URL}/api/check-phone-number`;
+    try {
+      const result: ApiResponse<{ exists: boolean }> = await fetch(url, {
+        method: "post",
+        body: formData,
+      }).then((res) => res.json());
       if (result.success) return result.data.exists;
       return false;
     } catch (error) {

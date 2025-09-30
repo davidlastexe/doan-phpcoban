@@ -33,7 +33,8 @@ $router->get('/reset-password', AuthController::class, 'showResetPasswordPage', 
 $router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
 
 // API không cần middleware
-$router->get('/api/check-email', ApiAuthController::class, 'checkEmail');
+$router->post('/api/check-email', ApiAuthController::class, 'checkEmail');
+$router->post('/api/check-phone-number', ApiAuthController::class, 'checkPhoneNumber');
 
 // API chưa login
 $router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['sanitize','guest']);

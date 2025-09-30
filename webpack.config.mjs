@@ -37,5 +37,5 @@ export default {
     extensions: [".ts", ".js"],
   },
 
-  mode: "development", // development, production or none
+  mode: "production", // development, production or none
 };

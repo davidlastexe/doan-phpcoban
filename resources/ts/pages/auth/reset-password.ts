@@ -89,6 +89,10 @@ resetPasswordForm.addEventListener("submit", async (event: SubmitEvent) => {
       anchorEle.appendChild(btnLogin);
 
       resetPasswordForm.replaceChildren(anchorEle);
+    } else if (result.errors) {
+      Object.keys(result.errors).forEach((key) => {
+        helpers.displayError(key, result.errors![key]![0]!);
+      });
     } else {
       toastManager.createToast({
         message: result.message,

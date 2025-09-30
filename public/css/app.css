@@ -918,10 +918,6 @@
   .gap-2 {
     gap: calc(var(--spacing) * 2);
   }
-  .border {
-    border-style: var(--tw-border-style);
-    border-width: 1px;
-  }
   .border-t {
     border-top-style: var(--tw-border-style);
     border-top-width: 1px;

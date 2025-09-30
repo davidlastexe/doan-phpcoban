@@ -19,9 +19,14 @@ class User {
     return $count > 0;
   }
 
+  public function phoneNumberExists(string $phoneNumber) {
+    $count = $this->db->countRows("SELECT id FROM `users` WHERE `phone_number` = ?", [$phoneNumber]);
+    return $count > 0;
+  }
+
   public function createUser(array $formData, string $emailVerificationToken) {
     $now = new DateTime();
-    $expiresAt = $now->add(new DateInterval('PT30M'));
+    $expiresAt = $now->add(new DateInterval('PT10M'));
     $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
 
     $data = [
@@ -132,7 +137,7 @@ class User {
       'password' => password_hash($newPassword, PASSWORD_DEFAULT),
       'is_activated' => 1,
       'forgot_password_token' => null,
-      'forgot_password_expires_at' => null
+      'forgot_password_expires_at' => null,
     ];
     return $this->db->update('users', $data, "`id` = :id", ['id' => $userId]);
   }
