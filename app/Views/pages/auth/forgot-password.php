@@ -16,21 +16,20 @@ Helpers::layout("head", ["title" => "Quên mật khẩu"]);
         <h1 class="text-2xl font-bold mb-4 text-center">Quên mật khẩu</h1>
         <div class="flex flex-col gap-2 mb-4">
           <label
-            for="email"
+            for="email_phone_number"
             class="required"
-          >Email</label>
+          >Email / Số điện thoại</label>
           <input
-            id="email"
-            name="email"
-            type="email"
-            placeholder="Nhập Email"
+            name="email_phone_number"
+            type="text"
+            placeholder="Nhập Email / Số điện thoại"
             class="input w-full"
-            data-field="email"
+            data-field="email_phone_number"
             required
           />
           <div
             class="error-log hidden"
-            data-field="email"
+            data-field="email_phone_number"
           ></div>
         </div>
 

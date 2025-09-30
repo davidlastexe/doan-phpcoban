@@ -22,7 +22,6 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
             class="required"
           >Họ Tên</label>
           <input
-            id="full_name"
             type="text"
             name="full_name"
             placeholder="Nhập tên"
@@ -42,7 +41,6 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
             class="required"
           >Email</label>
           <input
-            id="email"
             name="email"
             type="email"
             placeholder="Nhập Email"
@@ -59,7 +57,6 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
         <div class="flex flex-col gap-2 mb-4">
           <label for="phone_number">Số điện thoại</label>
           <input
-            id="phone_number"
             name="phone_number"
             type="tel"
             placeholder="Nhập số điện thoại"
@@ -78,7 +75,6 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
             class="required"
           >Mật khẩu</label>
           <input
-            id="password"
             name="password"
             type="password"
             placeholder="Đặt mật khẩu"
@@ -100,7 +96,6 @@ Helpers::layout("head", ["title" => "Đăng ký"]);
             Xác nhận mật khẩu
           </label>
           <input
-            id="confirm_password"
             name="confirm_password"
             type="password"
             placeholder="Xác nhận mật khẩu"

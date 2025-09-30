@@ -15,9 +15,12 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   helpers.clearError(fieldName);
 
   switch (fieldName) {
-    case "email":
-      if (!value) errorMessage = "Email không được bỏ trống!";
-      else if (!helpers.validateEmail(value))
+    case "email_phone_number":
+      if (!value) return false;
+      if (Number(value)) {
+        if (!helpers.isPhone(value))
+          errorMessage = "Số điện thoại không hợp lệ!";
+      } else if (!helpers.validateEmail(value))
         errorMessage = "Email không hợp lệ!";
       break;
   }

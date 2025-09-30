@@ -120,22 +120,28 @@ class AuthController {
 
     $errors = [];
 
-    // Validate email
-    if (empty($_POST['email']))
-      $errors['email'][] = "Email không được bỏ trống!";
-    else if (!Helpers::validateEmail($_POST['email']))
-      $errors['email'][] = "Email không hợp lệ!";
+    if (!empty($_POST['email_phone_number'])) {
+      if (is_numeric($_POST['email_phone_number'])) {
+        if (!Helpers::isPhone($_POST['email_phone_number']))
+          $errors['email_phone_number'][] = "Số điện thoại không hợp lệ!";
+      } else if (!Helpers::validateEmail($_POST['email_phone_number'])) {
+        $errors['email_phone_number'][] = "Email không hợp lệ!";
+      }
+    } else
+      $errors['email_phone_number'][] = "Email / Số điện thoại không được bỏ trống!";
 
     // Validate password
     if (empty($_POST['password']))
       $errors['password'][] = "Mật khẩu không được để trống!";
 
     if (!empty($errors)) {
-      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['errors' => $errors], 422);
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', $errors, 422);
     }
 
     $userModel = new User();
-    $user = $userModel->findUserByEmail($_POST['email']);
+    $user = (is_numeric($_POST['email_phone_number']))
+      ? $userModel->findUserByPhoneNumber($_POST['email_phone_number'])
+      : $userModel->findUserByEmail($_POST['email_phone_number']);
 
     if (!$user || !password_verify($_POST['password'], $user['password'])) {
       Helpers::sendJsonResponse(false, 'Email hoặc mật khẩu không chính xác.', null, 401);
@@ -229,24 +235,29 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
     }
 
+    if (empty($_POST['email_phone_number']))
+      Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', ['email_phone_number' => 'Email / Số điện thoại không được bỏ trống!'], 422);
+
     $errors = [];
 
-    // Validate email
-    if (empty($_POST['email']))
-      $errors['email'][] = "Email không được bỏ trống!";
-    else if (!Helpers::validateEmail($_POST['email']))
-      $errors['email'][] = "Email không hợp lệ!";
+    if (is_numeric($_POST['email_phone_number'])) {
+      if (!Helpers::isPhone($_POST['email_phone_number']))
+        $errors['email_phone_number'][] = "Số điện thoại không hợp lệ!";
+    } else if (!Helpers::validateEmail($_POST['email_phone_number'])) {
+      $errors['email_phone_number'][] = "Email không hợp lệ!";
+    }
 
     if (!empty($errors)) {
       Helpers::sendJsonResponse(false, 'Dữ liệu không hợp lệ. Vui lòng kiểm tra lại.', $errors, 422);
     }
 
     $userModel = new User();
-    $user = $userModel->findUserByEmail($_POST['email']);
+    $user = (is_numeric($_POST['email_phone_number']))
+      ? $userModel->findUserByPhoneNumber($_POST['email_phone_number'])
+      : $userModel->findUserByEmail($_POST['email_phone_number']);
 
-    if (!$user) {
+    if (!$user)
       Helpers::sendJsonResponse(false, 'Email chưa được đăng ký hoặc không chính xác.', null, 401); // 401 Unauthorized => lỗi xác thực
-    }
 
     $forgotPasswordToken = bin2hex(random_bytes(32));
     $isTokenSet = $userModel->setForgotPasswordToken($user['id'], $forgotPasswordToken);
@@ -259,7 +270,7 @@ class AuthController {
     require_once _PATH_URL_VIEWS.'/emails/forgot-pw-email-content.php';
     $content = ob_get_clean();
 
-    Helpers::sendMail($_POST['email'], $subject, $content);
+    Helpers::sendMail($user['email'], $subject, $content);
 
     Helpers::sendJsonResponse(true, 'Vui lòng kiểm tra email để đặt lại mật khẩu.', null, 200);
   }

@@ -49,6 +49,12 @@ class User {
     return $this->db->getOne($sql, ['email' => $email]);
   }
 
+  public function findUserByPhoneNumber(string $phoneNumber) {
+    $sql = "SELECT * FROM `users`
+            WHERE `phone_number` = :phone_number";
+    return $this->db->getOne($sql, ['phone_number' => $phoneNumber]);
+  }
+
   public function findUserByEmailVeriToken(string $token) {
     $sql = "SELECT `id` FROM `users`
             WHERE `email_verification_token` = :token
