@@ -5,9 +5,11 @@ import { Helpers } from "../utils/helpers";
 class AuthService {
   private accessToken: string | null = null;
   private refreshTokenPromise: Promise<any> | null = null;
+  private refreshTimeoutId: ReturnType<typeof setTimeout> | null = null;
 
   constructor() {
     this.accessToken = localStorage.getItem("access_token");
+    this.scheduleNextTokenRefresh();
   }
 
   async checkEmailExists(email: string) {
@@ -79,6 +81,7 @@ class AuthService {
     if (result.success) {
       this.accessToken = result.data.access_token;
       localStorage.setItem("access_token", result.data.access_token);
+      localStorage.setItem("token_expires_at", String(result.data.expires_in));
     }
     return result;
   }
@@ -109,7 +112,9 @@ class AuthService {
     const accessToken = this.accessToken;
 
     this.accessToken = null;
+    this.stopTokenRefreshTimer();
     localStorage.removeItem("access_token");
+    localStorage.removeItem("token_expires_at");
 
     try {
       const url = `${FULL_URL}/api/logout`;
@@ -162,14 +167,22 @@ class AuthService {
       const url = `${FULL_URL}/api/refresh-token`;
       this.refreshTokenPromise = fetch(url, { method: "POST" })
         .then(async (res) => {
-          if (!res.ok) throw new Error("Lấy refresh token thất bại!");
-          const result = await res.json();
+          if (!res.ok)
+            throw new Error("Refresh token không hợp lệ hoặc đã hết hạn.");
+          const result: ApiResponse<LoginResponse> = await res.json();
           if (result.success) {
             this.accessToken = result.data.access_token;
             localStorage.setItem("access_token", this.accessToken!);
+            localStorage.setItem(
+              "token_expires_at",
+              String(result.data.expires_in)
+            );
+            this.scheduleNextTokenRefresh();
             return this.accessToken;
           } else {
-            throw new Error("Đã xảy ra lỗi từ refresh token API");
+            throw new Error(
+              result.message || "Đã xảy ra lỗi từ refresh token API"
+            );
           }
         })
         .finally(() => {
@@ -177,6 +190,43 @@ class AuthService {
         });
     }
     return this.refreshTokenPromise;
+  }
+
+  private stopTokenRefreshTimer() {
+    if (this.refreshTimeoutId) {
+      clearTimeout(this.refreshTimeoutId);
+      this.refreshTimeoutId = null;
+    }
+  }
+
+  private async scheduleNextTokenRefresh() {
+    this.stopTokenRefreshTimer();
+
+    const expiresAtString = localStorage.getItem("token_expires_at");
+    if (!expiresAtString) return;
+
+    const expiresAt = parseInt(expiresAtString, 10) * 1000; // Chuyển sang mili-giây
+    const now = Date.now();
+
+    const safeMargin = 60 * 1000; // 1 phút
+
+    const timeoutDuration = expiresAt - now - safeMargin;
+
+    if (timeoutDuration > 0) {
+      this.refreshTimeoutId = setTimeout(async () => {
+        try {
+          await this.refreshToken();
+        } catch (error) {
+          console.error("Tự động làm mới token thất bại:", error);
+        }
+      }, timeoutDuration);
+    } else {
+      try {
+        await this.refreshToken();
+      } catch (error) {
+        console.error("Tự động làm mới token thất bại:", error);
+      }
+    }
   }
 }
 
