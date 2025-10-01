@@ -187,7 +187,7 @@ class AuthController {
 
     $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
     $issuedAt = new DateTimeImmutable();
-    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME_MINUTES']} minutes")->getTimestamp();
+    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME']}")->getTimestamp();
     $roles = array_column($userModel->getRolesUser($user['id']), 'name');
     $permissions = array_column($userModel->getPermissionsUser($user['id']), 'name');
 
@@ -350,7 +350,6 @@ class AuthController {
     if (!$refreshToken)
       Helpers::sendJsonResponse(false, 'Không tìm thấy phiên đăng nhập.', null, 400);
 
-
     $tokenModel = new RefreshToken();
     $refreshTokenHash = hash('sha256', $refreshToken);
     $tokenData = $tokenModel->findValidTokenByHash($refreshTokenHash);
@@ -372,7 +371,7 @@ class AuthController {
 
     $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
     $issuedAt = new DateTimeImmutable();
-    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME_MINUTES']} minutes")->getTimestamp();
+    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME']}")->getTimestamp();
 
     $roles = array_column($userModel->getRolesUser($user['id']), 'name');
     $permissions = array_column($userModel->getPermissionsUser($user['id']), 'name');

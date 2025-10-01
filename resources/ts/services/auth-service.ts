@@ -217,14 +217,14 @@ class AuthService {
         try {
           await this.refreshToken();
         } catch (error) {
-          console.error("Tự động làm mới token thất bại:", error);
+          this.logout();
         }
       }, timeoutDuration);
     } else {
       try {
         await this.refreshToken();
       } catch (error) {
-        console.error("Tự động làm mới token thất bại:", error);
+        this.logout();
       }
     }
   }
