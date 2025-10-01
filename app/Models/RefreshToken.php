@@ -33,4 +33,9 @@ class RefreshToken {
                   LIMIT 1";
     return $this->db->delete('refresh_tokens', $condition, ['user_id' => $userId]);
   }
+
+  public function deleteTokenByHash($refreshTokenHash) {
+    $condition = "token_hash = :token_hash";
+    return $this->db->delete('refresh_tokens', $condition, ['token_hash' => $refreshTokenHash]);
+  }
 }

@@ -10,12 +10,11 @@ use Firebase\JWT\SignatureInvalidException;
 
 class AuthMiddleware {
   public static function handle() {
-    $authHeader = $_SERVER['HTTP_AUTHORIZATION'] ?? null;
+    $authHeader = $_SERVER['REDIRECT_REDIRECT_HTTP_AUTHORIZATION'] ?? null;
 
     if (!$authHeader) {
       Helpers::sendJsonResponse(false, 'Yêu cầu thiếu token xác thực.', null, 401);
     }
-
     if (!preg_match('/Bearer\s(\S+)/', $authHeader, $matches)) {
       Helpers::sendJsonResponse(false, 'Định dạng token không hợp lệ.', null, 401);
     }

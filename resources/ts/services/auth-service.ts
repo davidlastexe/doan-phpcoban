@@ -75,7 +75,7 @@ class AuthService {
       body: formData,
     }).then((res) => res.json());
 
-    if (result.success && result.data) {
+    if (result.success) {
       this.accessToken = result.data.access_token;
       localStorage.setItem("access_token", result.data.access_token);
     }
@@ -104,11 +104,25 @@ class AuthService {
     return result;
   }
 
-  logout() {
+  async logout() {
+    const accessToken = this.accessToken;
+
     this.accessToken = null;
     localStorage.removeItem("access_token");
-    // NOTE: chưa xây dựng api này
-    fetch("/api/logout", { method: "POST" });
+
+    try {
+      const url = `${FULL_URL}/api/logout`;
+      const result: ApiResponse<null> = await fetch(url, {
+        method: "post",
+        headers: {
+          Authorization: `Bearer ${accessToken}`,
+        },
+      }).then((res) => res.json());
+
+      return result;
+    } catch (error) {
+      console.error("Lỗi khi gọi API logout:", error);
+    }
   }
 
   async fetchWithAuth(

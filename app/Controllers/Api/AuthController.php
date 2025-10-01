@@ -210,6 +210,40 @@ class AuthController {
     Helpers::sendJsonResponse(true, 'Đăng nhập thành công!', $responseData);
   }
 
+  public function handleLogout() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
+    $refreshToken = $_COOKIE['refresh_token'] ?? null;
+
+    if (!$refreshToken)
+      Helpers::sendJsonResponse(false, 'Không tìm thấy phiên đăng nhập.', null, 400);
+
+    $refreshTokenHash = hash('sha256', $refreshToken);
+
+    $tokenModel = new RefreshToken();
+    $isDeleted = $tokenModel->deleteTokenByHash($refreshTokenHash);
+
+    if (!$isDeleted) {
+      error_log("Không thể xóa refresh token có hash: $refreshTokenHash");
+    }
+
+    setcookie(
+      'refresh_token',
+      '',
+      [
+        'expires' => time() - 3600, // Hết hạn 1 giờ trước
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
+      ]
+    );
+
+    Helpers::sendJsonResponse(true, 'Đăng xuất thành công.');
+  }
+
   public function activateAccount() {
     if (!Helpers::isPost()) {
       Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);

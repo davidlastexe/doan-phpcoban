@@ -44,6 +44,7 @@ $router->post('/api/forgot-password', ApiAuthController::class, 'handleForgotPas
 $router->post('/api/reset-password', ApiAuthController::class, 'handleResetPassword', ['sanitize', 'guest']);
 
 // API yêu cầu phải đăng nhập
+$router->post('/api/logout', ApiAuthController::class, 'handleLogout', ['auth']);
 // $router->get('/api/user/profile', [Api\UserController::class, 'getProfile'], ['auth']);
 
 // API yêu cầu phải đăng nhập VÀ CÓ QUYỀN HẠN

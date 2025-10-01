@@ -1,8 +1,7 @@
-import { FULL_URL } from "../../app";
 import { spinnerIcon } from "../../utils/constants";
 import { authService } from "../../services/auth-service";
 import { toastManager } from "../../toast-manager";
-import { helpers } from "../../utils/helpers";
+import { Helpers } from "../../utils/helpers";
 
 const loginForm = document.getElementById("login-form") as HTMLFormElement;
 const inputs = loginForm.querySelectorAll<HTMLInputElement>("[data-field]");
@@ -13,15 +12,15 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  helpers.clearError(fieldName);
+  Helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "email_phone_number":
       if (!value) errorMessage = "Email / Số điện thoại không được bỏ trống!";
       else if (Number(value)) {
-        if (!helpers.isPhone(value))
+        if (!Helpers.isPhone(value))
           errorMessage = "Số điện thoại không hợp lệ!";
-      } else if (!helpers.validateEmail(value))
+      } else if (!Helpers.validateEmail(value))
         errorMessage = "Email không hợp lệ!";
       break;
 
@@ -31,7 +30,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   }
 
   if (errorMessage) {
-    helpers.displayError(fieldName, errorMessage);
+    Helpers.displayError(fieldName, errorMessage);
     return false;
   }
   return true;
@@ -75,11 +74,11 @@ loginForm.addEventListener("submit", async (event: SubmitEvent) => {
         message: result.message,
         type: "success",
       });
-      window.location.href = `${FULL_URL}`;
+      Helpers.redirect();
       loginForm.reset();
     } else if (result.errors) {
       Object.keys(result.errors).forEach((key) => {
-        helpers.displayError(key, result.errors![key]![0]!);
+        Helpers.displayError(key, result.errors![key]![0]!);
       });
     } else {
       toastManager.createToast({

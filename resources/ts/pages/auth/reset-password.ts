@@ -2,7 +2,7 @@ import { FULL_URL } from "../../app";
 import { spinnerIcon } from "../../utils/constants";
 import { authService } from "../../services/auth-service";
 import { toastManager } from "../../toast-manager";
-import { helpers } from "../../utils/helpers";
+import { Helpers } from "../../utils/helpers";
 
 const resetPasswordForm = document.getElementById(
   "reset-password-form"
@@ -19,7 +19,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  helpers.clearError(fieldName);
+  Helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "new_password":
@@ -38,7 +38,7 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   }
 
   if (errorMessage) {
-    helpers.displayError(fieldName, errorMessage);
+    Helpers.displayError(fieldName, errorMessage);
     return true;
   }
   return true;
@@ -91,7 +91,7 @@ resetPasswordForm.addEventListener("submit", async (event: SubmitEvent) => {
       resetPasswordForm.replaceChildren(anchorEle);
     } else if (result.errors) {
       Object.keys(result.errors).forEach((key) => {
-        helpers.displayError(key, result.errors![key]![0]!);
+        Helpers.displayError(key, result.errors![key]![0]!);
       });
     } else {
       toastManager.createToast({

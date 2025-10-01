@@ -1,7 +1,7 @@
 import { spinnerIcon } from "../../utils/constants";
 import { authService } from "../../services/auth-service";
 import { toastManager } from "../../toast-manager";
-import { helpers } from "../../utils/helpers";
+import { Helpers } from "../../utils/helpers";
 
 const forgotForm = document.getElementById("forgot-form") as HTMLFormElement;
 const inputs = forgotForm.querySelectorAll<HTMLInputElement>("[data-field]");
@@ -12,21 +12,21 @@ async function validateField(input: HTMLInputElement): Promise<boolean> {
   const value = input.value?.trim();
   let errorMessage = "";
 
-  helpers.clearError(fieldName);
+  Helpers.clearError(fieldName);
 
   switch (fieldName) {
     case "email_phone_number":
       if (!value) errorMessage = "Email / Số điện thoại không được bỏ trống!";
       else if (Number(value)) {
-        if (!helpers.isPhone(value))
+        if (!Helpers.isPhone(value))
           errorMessage = "Số điện thoại không hợp lệ!";
-      } else if (!helpers.validateEmail(value))
+      } else if (!Helpers.validateEmail(value))
         errorMessage = "Email không hợp lệ!";
       break;
   }
 
   if (errorMessage) {
-    helpers.displayError(fieldName, errorMessage);
+    Helpers.displayError(fieldName, errorMessage);
     return false;
   }
   return true;
@@ -71,7 +71,7 @@ forgotForm.addEventListener("submit", async (event: SubmitEvent) => {
       forgotForm.reset();
     } else if (result.errors) {
       Object.keys(result.errors).forEach((key) => {
-        helpers.displayError(key, result.errors![key]![0]!);
+        Helpers.displayError(key, result.errors![key]![0]!);
       });
     } else {
       toastManager.createToast({
