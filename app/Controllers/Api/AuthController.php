@@ -96,8 +96,9 @@ class AuthController {
     }
 
     $emailVerificationToken = bin2hex(random_bytes(32));
-    if (!$userModel->createUser($_POST, $emailVerificationToken)) {
-      // Mã 500 (Internal Server Error) cho lỗi từ phía server (ví dụ: lỗi database)
+    $userId = $userModel->createUser($_POST, $emailVerificationToken);
+    $isSetRole = $userModel->setRoleUser($_ENV['DEFAULT_USER_ROLE'], $userId);
+    if (!$userId && !$isSetRole) {
       Helpers::sendJsonResponse(false, 'Đăng ký thất bại do lỗi hệ thống. Vui lòng thử lại!', null, 500);
     }
 
@@ -161,7 +162,7 @@ class AuthController {
 
     $refreshToken = bin2hex(random_bytes(32));
     $refreshTokenHash = hash('sha256', $refreshToken);
-    $refreshTokenExpiresAt = (new DateTime())->add(new DateInterval('P30D'));
+    $refreshTokenExpiresAt = (new DateTime())->add(new DateInterval($_ENV['REFRESH_TOKEN_LIFETIME']));
 
     $userAgent = $_SERVER['HTTP_USER_AGENT'] ?? '';
     $ipAddress = $userModel->getUserIpAddress();
@@ -186,7 +187,7 @@ class AuthController {
 
     $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
     $issuedAt = new DateTimeImmutable();
-    $expire = $issuedAt->modify('+15 minutes')->getTimestamp();
+    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME_MINUTES']} minutes")->getTimestamp();
     $roles = array_column($userModel->getRolesUser($user['id']), 'name');
     $permissions = array_column($userModel->getPermissionsUser($user['id']), 'name');
 
@@ -220,26 +221,16 @@ class AuthController {
     if (!$refreshToken)
       Helpers::sendJsonResponse(false, 'Không tìm thấy phiên đăng nhập.', null, 400);
 
-    $refreshTokenHash = hash('sha256', $refreshToken);
 
     $tokenModel = new RefreshToken();
+    $refreshTokenHash = hash('sha256', $refreshToken);
     $isDeleted = $tokenModel->deleteTokenByHash($refreshTokenHash);
 
     if (!$isDeleted) {
       error_log("Không thể xóa refresh token có hash: $refreshTokenHash");
     }
 
-    setcookie(
-      'refresh_token',
-      '',
-      [
-        'expires' => time() - 3600, // Hết hạn 1 giờ trước
-        'path' => '/',
-        'secure' => true,
-        'httponly' => true,
-        'samesite' => 'Strict'
-      ]
-    );
+    self::clearRefreshTokenCookie();
 
     Helpers::sendJsonResponse(true, 'Đăng xuất thành công.');
   }
@@ -347,5 +338,72 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Có lỗi xảy ra trong quá trình đặt lại mật khẩu.', null, 500); // 500 internal server error
 
     Helpers::sendJsonResponse(true, 'Tài khoản đã được đặt lại mật khẩu thành công.');
+  }
+
+  public function handleRefreshToken() {
+    if (!Helpers::isPost()) {
+      Helpers::sendJsonResponse(false, 'Phương thức không hợp lệ.', null, 405);
+    }
+
+    $refreshToken = $_COOKIE['refresh_token'] ?? null;
+
+    if (!$refreshToken)
+      Helpers::sendJsonResponse(false, 'Không tìm thấy phiên đăng nhập.', null, 400);
+
+
+    $tokenModel = new RefreshToken();
+    $refreshTokenHash = hash('sha256', $refreshToken);
+    $tokenData = $tokenModel->findValidTokenByHash($refreshTokenHash);
+
+    if (!$tokenData) {
+      self::clearRefreshTokenCookie();
+      Helpers::sendJsonResponse(false, 'Phiên đăng nhập đã hết hạn. Vui lòng đăng nhập lại.', null, 401);
+    }
+
+    $userModel = new User();
+    $user = $userModel->findUserById($tokenData['user_id']);
+
+    if (!$user) {
+      Helpers::sendJsonResponse(false, 'Không tìm thấy người dùng.', null, 404);
+    }
+
+    $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
+    $issuedAt = new DateTimeImmutable();
+    $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME_MINUTES']} minutes")->getTimestamp();
+
+    $roles = array_column($userModel->getRolesUser($user['id']), 'name');
+    $permissions = array_column($userModel->getPermissionsUser($user['id']), 'name');
+
+    $payload = [
+      'iat' => $issuedAt->getTimestamp(),
+      'exp' => $expire,
+      'data' => [
+        'userId' => $user['id'],
+        'roles' => $roles,
+        'permissions' => $permissions
+      ]
+    ];
+    $accessToken = JWT::encode($payload, $secretKey, 'HS256');
+
+    $responseData = [
+      'access_token' => $accessToken,
+      'expires_in' => $expire,
+    ];
+
+    Helpers::sendJsonResponse(true, 'Token đã được làm mới thành công.', $responseData);
+  }
+
+  private static function clearRefreshTokenCookie() {
+    setcookie(
+      'refresh_token',
+      '',
+      [
+        'expires' => time() - 3600, // Hết hạn 1 giờ trước
+        'path' => '/',
+        'secure' => true,
+        'httponly' => true,
+        'samesite' => 'Strict'
+      ]
+    );
   }
 }

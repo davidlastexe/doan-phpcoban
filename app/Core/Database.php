@@ -69,15 +69,20 @@ class Database {
     }
   }
 
-  public function insert($table, $data) {
+  public function insert(string $table, array $data, bool $ignore = false) {
     $keys = array_keys($data);
     $fields = implode(", ", array_map(fn ($key) => "`{$key}`", $keys));
     $places = ":".implode(",:", $keys);
 
     try {
-      $sql = "INSERT INTO `$table` ($fields) VALUES ($places)";
+      $insertS = !$ignore ? 'INSERT INTO' : 'INSERT IGNORE INTO';
+      $sql = "$insertS `$table` ($fields) VALUES ($places)";
       $stm = $this->connect->prepare($sql);
-      return $stm->execute($data);
+
+      $success = $stm->execute($data);
+      if ($success)
+        return $this->lastID();
+      return false;
     } catch (PDOException $ex) {
       $this->writeErrorLog($ex);
       return false;
@@ -108,5 +113,17 @@ class Database {
       $this->writeErrorLog($ex);
       return false;
     }
+  }
+
+  public function beginTransaction() {
+    return $this->connect->beginTransaction();
+  }
+
+  public function commit() {
+    return $this->connect->commit();
+  }
+
+  public function rollBack() {
+    return $this->connect->rollBack();
   }
 }

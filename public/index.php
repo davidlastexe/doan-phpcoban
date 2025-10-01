@@ -35,6 +35,8 @@ $router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
 // API không cần middleware
 $router->post('/api/check-email', ApiAuthController::class, 'checkEmail');
 $router->post('/api/check-phone-number', ApiAuthController::class, 'checkPhoneNumber');
+$router->post('/api/refresh-token', ApiAuthController::class, 'handleRefreshToken');
+$router->post('/api/logout', ApiAuthController::class, 'handleLogout');
 
 // API chưa login
 $router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['sanitize','guest']);
@@ -44,7 +46,6 @@ $router->post('/api/forgot-password', ApiAuthController::class, 'handleForgotPas
 $router->post('/api/reset-password', ApiAuthController::class, 'handleResetPassword', ['sanitize', 'guest']);
 
 // API yêu cầu phải đăng nhập
-$router->post('/api/logout', ApiAuthController::class, 'handleLogout', ['auth']);
 // $router->get('/api/user/profile', [Api\UserController::class, 'getProfile'], ['auth']);
 
 // API yêu cầu phải đăng nhập VÀ CÓ QUYỀN HẠN

@@ -34,8 +34,14 @@ class RefreshToken {
     return $this->db->delete('refresh_tokens', $condition, ['user_id' => $userId]);
   }
 
-  public function deleteTokenByHash($refreshTokenHash) {
+  public function findValidTokenByHash(string $tokenHash) {
+    $sql = "SELECT * FROM `refresh_tokens`
+            WHERE `token_hash` = :token_hash AND `expires_at` > NOW()";
+    return $this->db->getOne($sql, ['token_hash' => $tokenHash]);
+  }
+
+  public function deleteTokenByHash($tokenHash) {
     $condition = "token_hash = :token_hash";
-    return $this->db->delete('refresh_tokens', $condition, ['token_hash' => $refreshTokenHash]);
+    return $this->db->delete('refresh_tokens', $condition, ['token_hash' => $tokenHash]);
   }
 }

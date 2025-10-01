@@ -1,5 +1,6 @@
 import { FULL_URL } from "../app";
 import type { ApiResponse, LoginResponse } from "../type";
+import { Helpers } from "../utils/helpers";
 
 class AuthService {
   private accessToken: string | null = null;
@@ -112,24 +113,23 @@ class AuthService {
 
     try {
       const url = `${FULL_URL}/api/logout`;
-      const result: ApiResponse<null> = await fetch(url, {
+      await fetch(url, {
         method: "post",
         headers: {
           Authorization: `Bearer ${accessToken}`,
         },
       }).then((res) => res.json());
-
-      return result;
     } catch (error) {
       console.error("Lỗi khi gọi API logout:", error);
     }
+    Helpers.redirect("/login");
   }
 
   async fetchWithAuth(
     url: string,
     options: RequestInit = {}
   ): Promise<Response> {
-    let token = this.accessToken;
+    const token = this.accessToken;
 
     const headers = new Headers(options.headers || {});
     if (token) {
@@ -148,9 +148,9 @@ class AuthService {
         console.log("Token refreshed. Retrying the original request...");
         response = await fetch(url, options);
       } catch (error) {
-        console.error("Failed to refresh token. Logging out.", error);
+        console.error("Lấy token thất bại. Đăng xuất.", error);
         this.logout();
-        window.location.href = "/login";
+        Helpers.redirect("/login");
       }
     }
 
@@ -159,13 +159,18 @@ class AuthService {
 
   private async refreshToken(): Promise<string> {
     if (!this.refreshTokenPromise) {
-      // NOTE: chưa xây dựng api này
-      this.refreshTokenPromise = fetch("/api/refresh-token", { method: "POST" })
+      const url = `${FULL_URL}/api/refresh-token`;
+      this.refreshTokenPromise = fetch(url, { method: "POST" })
         .then(async (res) => {
-          if (!res.ok) throw new Error("Refresh token failed");
-          const data = await res.json();
-          this.login(data.access_token);
-          return data.access_token;
+          if (!res.ok) throw new Error("Lấy refresh token thất bại!");
+          const result = await res.json();
+          if (result.success) {
+            this.accessToken = result.data.access_token;
+            localStorage.setItem("access_token", this.accessToken!);
+            return this.accessToken;
+          } else {
+            throw new Error("Đã xảy ra lỗi từ refresh token API");
+          }
         })
         .finally(() => {
           this.refreshTokenPromise = null;

@@ -4,6 +4,7 @@ namespace App\Models;
 use App\Core\Database;
 use DateInterval;
 use DateTime;
+use PDOException;
 
 class User {
   private $db;
@@ -26,7 +27,7 @@ class User {
 
   public function createUser(array $formData, string $emailVerificationToken) {
     $now = new DateTime();
-    $expiresAt = $now->add(new DateInterval('PT10M'));
+    $expiresAt = $now->add(new DateInterval($_ENV['ACTIVATE_EMAIL_TOKEN_LIFETIME']));
     $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
 
     $data = [
@@ -41,6 +42,12 @@ class User {
     }
 
     return $this->db->insert('users', $data);
+  }
+
+  public function findUserById(int $userId) {
+    $sql = "SELECT * FROM `users`
+            WHERE `id` = :id";
+    return $this->db->getOne($sql, ['id' => $userId]);
   }
 
   public function findUserByEmail(string $email) {
@@ -118,18 +125,35 @@ class User {
     return '';
   }
 
-  public function setRoleUser(string $role, int $userId) {
-    /**
-     * TODO:
-     * 1. select bảng roles tìm khớp với $role
-     * 2. lấy id của role và $userId insert vào bảng role_user
-     * 3. trả về true or false
-     */
+  public function setRoleUser(string $roleName, int $userId) {
+    $this->db->beginTransaction();
+    try {
+      $roleSql = "SELECT `id` FROM `roles` WHERE `name` = :name";
+      $role = $this->db->getOne($roleSql, ['name' => $roleName]);
+
+      if (!$role) {
+        $this->db->rollBack();
+        return false;
+      }
+      $roleId = $role['id'];
+
+      $this->db->insert('role_user', [
+        'user_id' => $userId,
+        'role_id' => $roleId
+      ], true);
+
+      $this->db->commit();
+      return true;
+    } catch (PDOException $ex) {
+      $this->db->rollBack();
+      $this->db->writeErrorLog($ex);
+      return false;
+    }
   }
 
   public function setForgotPasswordToken(int $userId, string $forgotPasswordToken) {
     $now = new DateTime();
-    $expiresAt = $now->add(new DateInterval('PT5M'));
+    $expiresAt = $now->add(new DateInterval($_ENV['FORGOT_PASSWORD_TOKEN_LIFETIME']));
     $expiresAtFormatted = $expiresAt->format('Y-m-d H:i:s');
     $data = [
       'forgot_password_token' => $forgotPasswordToken,
