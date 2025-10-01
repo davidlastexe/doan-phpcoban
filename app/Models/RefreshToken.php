@@ -44,4 +44,9 @@ class RefreshToken {
     $condition = "token_hash = :token_hash";
     return $this->db->delete('refresh_tokens', $condition, ['token_hash' => $tokenHash]);
   }
+
+  public function updateTokenExpiresAt(int $tokenId, string $newExpiresAt): bool {
+    $data = ['expires_at' => $newExpiresAt];
+    return $this->db->update('refresh_tokens', $data, 'id = :id', ['id' => $tokenId]);
+  }
 }

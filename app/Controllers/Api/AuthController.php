@@ -367,6 +367,9 @@ class AuthController {
       Helpers::sendJsonResponse(false, 'Không tìm thấy người dùng.', null, 404);
     }
 
+    $newRefreshTokenExpiresAt = (new DateTime())->add(new DateInterval($_ENV['REFRESH_TOKEN_LIFETIME']))->format('Y-m-d H:i:s');
+    $tokenModel->updateTokenExpiresAt($tokenData['id'], $newRefreshTokenExpiresAt);
+
     $secretKey = $_ENV['ACCESS_TOKEN_SECRET'];
     $issuedAt = new DateTimeImmutable();
     $expire = $issuedAt->modify("+{$_ENV['ACCESS_TOKEN_LIFETIME_MINUTES']} minutes")->getTimestamp();
