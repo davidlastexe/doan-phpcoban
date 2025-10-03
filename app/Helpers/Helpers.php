@@ -143,4 +143,8 @@ class Helpers {
     header("Location: {$url}");
     exit();
   }
+
+  public static function isLoggedIn() {
+    return isset($_COOKIE['refresh_token']);
+  }
 }

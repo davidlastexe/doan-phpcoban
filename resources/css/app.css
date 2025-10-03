@@ -18,6 +18,10 @@
   }
 }
 
+@utility link:hover {
+  @apply opacity-70;
+}
+
 .custom-toast {
   background-color: #333;
   color: #fff;
