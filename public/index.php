@@ -1,4 +1,6 @@
 <?php
+
+use App\Controllers\DashboardController;
 date_default_timezone_set("Asia/Ho_Chi_Minh");
 session_start();
 ob_start(); // lưu toàn bộ vào bộ nhớ đệm
@@ -30,7 +32,7 @@ $router->get('/forgot-password', AuthController::class, 'showForgotPasswordPage'
 $router->get('/reset-password', AuthController::class, 'showResetPasswordPage', ['guest']);
 
 // Route đã login
-$router->get('/dashboard', PageController::class, 'dashboard', ['auth']);
+$router->get('/dashboard', DashboardController::class, 'index');
 
 // API không cần middleware
 $router->post('/api/check-email', ApiAuthController::class, 'checkEmail');
@@ -39,7 +41,7 @@ $router->post('/api/refresh-token', ApiAuthController::class, 'handleRefreshToke
 $router->post('/api/logout', ApiAuthController::class, 'handleLogout');
 
 // API chưa login
-$router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['sanitize','guest']);
+$router->post('/api/activate', ApiAuthController::class, 'activateAccount', ['sanitize', 'guest']);
 $router->post('/api/register', ApiAuthController::class, 'handleRegister', ['sanitize', 'guest']);
 $router->post('/api/login', ApiAuthController::class, 'handleLogin', ['sanitize', 'guest']);
 $router->post('/api/forgot-password', ApiAuthController::class, 'handleForgotPassword', ['sanitize', 'guest']);

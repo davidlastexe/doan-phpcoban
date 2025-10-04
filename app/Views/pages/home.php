@@ -113,12 +113,19 @@ View::layout('head', ['title' => $title]);
                 </div>
                 <ul
                   tabindex="0"
-                  class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
+                  class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-37 p-2 shadow [&_li>*]:text-sm"
                 >
                   <li>
                     <a class="justify-between">
                       Thông tin cá nhân
-                      <span class="badge">Mới</span>
+                    </a>
+                  </li>
+                  <li>
+                    <a
+                      class="justify-between"
+                      href="<?php echo _HOST_URL ?>/dashboard"
+                    >
+                      Dashboard
                     </a>
                   </li>
                   <li><a>Cài đặt</a></li>

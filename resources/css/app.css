@@ -18,8 +18,10 @@
   }
 }
 
-@utility link:hover {
-  @apply opacity-70;
+@utility link {
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .custom-toast {
