@@ -6,5 +6,5 @@
 </div>
 <script
   type="module"
-  src="./public/js/pages/auth/activate.js"
+  src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/auth/activate.js"
 ></script>

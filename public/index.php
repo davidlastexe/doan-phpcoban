@@ -35,6 +35,9 @@ $router->get('/orders', PageController::class, 'orders', ['auth']);
 
 // Route đã login
 $router->get('/dashboard', DashboardController::class, 'index', ['auth']);
+$router->get('/dashboard/orders', DashboardController::class, 'orders', ['auth']);
+$router->get('/dashboard/products', DashboardController::class, 'products', ['auth']);
+$router->get('/dashboard/users', DashboardController::class, 'users', ['auth']);
 
 // API không cần middleware
 $router->post('/api/check-email', ApiAuthController::class, 'checkEmail');

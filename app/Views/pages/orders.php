@@ -27,7 +27,7 @@ View::layout('head', ['title' => $title]);
                 class="btn btn-square btn-ghost"
               >
                 <img
-                  src="./public/icons/menu.svg"
+                  src="<?php echo _HOST_URL_PUBLIC ?>/icons/menu.svg"
                   alt="Mobile menu icon"
                 >
               </label>
@@ -37,7 +37,7 @@ View::layout('head', ['title' => $title]);
               class="text-xl flex items-center gap-2 font-semibold"
             >
               <img
-                src="./public/icons/popcorn.svg"
+                src="<?php echo _HOST_URL_PUBLIC ?>/icons/popcorn.svg"
                 alt="Popcorn icon"
               >Ăn Vặt Shop</a>
           </div>
@@ -263,7 +263,7 @@ View::layout('head', ['title' => $title]);
   </div>
   <script
     type="module"
-    src="./public/js/pages/orders.js"
+    src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/orders.js"
   ></script>
 </body>
 

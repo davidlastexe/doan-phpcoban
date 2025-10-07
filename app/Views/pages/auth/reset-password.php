@@ -61,5 +61,5 @@
 <?php endif; ?>
 <script
   type="module"
-  src="./public/js/pages/auth/reset-password.js"
+  src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/auth/reset-password.js"
 ></script>

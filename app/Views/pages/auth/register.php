@@ -118,5 +118,5 @@
 </form>
 <script
   type="module"
-  src="./public/js/pages/auth/register.js"
+  src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/auth/register.js"
 ></script>

@@ -32,5 +32,5 @@
 </form>
 <script
   type="module"
-  src="./public/js/pages/auth/forgot-password.js"
+  src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/auth/forgot-password.js"
 ></script>

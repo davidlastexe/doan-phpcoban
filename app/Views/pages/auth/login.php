@@ -64,5 +64,5 @@
 </form>
 <script
   type="module"
-  src="./public/js/pages/auth/login.js"
+  src="<?php echo _HOST_URL_PUBLIC ?>/js/pages/auth/login.js"
 ></script>
