@@ -22,7 +22,7 @@ use App\Helpers\Helpers;
 $router = new Router();
 
 // Ai cũng vào được
-$router->get('/', HomeController::class, 'index');
+$router->get('/', PageController::class, 'home');
 
 // Route chưa login
 $router->get('/activate', AuthController::class, 'showActivatePage', ['guest']);
@@ -31,8 +31,10 @@ $router->get('/register', AuthController::class, 'showRegisterPage', ['guest']);
 $router->get('/forgot-password', AuthController::class, 'showForgotPasswordPage', ['guest']);
 $router->get('/reset-password', AuthController::class, 'showResetPasswordPage', ['guest']);
 
+$router->get('/orders', PageController::class, 'orders', ['auth']);
+
 // Route đã login
-$router->get('/dashboard', DashboardController::class, 'index');
+$router->get('/dashboard', DashboardController::class, 'index', ['auth']);
 
 // API không cần middleware
 $router->post('/api/check-email', ApiAuthController::class, 'checkEmail');

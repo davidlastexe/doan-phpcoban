@@ -88,13 +88,22 @@ CREATE TABLE
     `product_name` VARCHAR(255) NOT NULL,
     `description` TEXT,
     `price` DECIMAL(10, 2) NOT NULL,
-    `image_url` VARCHAR(255),
     `stock_quantity` INT NOT NULL DEFAULT 0,
     `category_id` INT,
     `created_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
     `updated_at` TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
     FOREIGN KEY (`category_id`) REFERENCES `categories` (`id`) ON DELETE SET NULL,
     INDEX `idx_product_name` (`product_name`)
+  );
+
+CREATE TABLE
+  `product_images` (
+    `id` INT PRIMARY KEY AUTO_INCREMENT,
+    `product_id` INT NOT NULL,
+    `image_url` VARCHAR(255) NOT NULL,
+    `display_order` TINYINT NOT NULL DEFAULT 0,
+    `alt_text` VARCHAR(255),
+    FOREIGN KEY (`product_id`) REFERENCES `products` (`id`) ON DELETE CASCADE
   );
 
 CREATE TABLE

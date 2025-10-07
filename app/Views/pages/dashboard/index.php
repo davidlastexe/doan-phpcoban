@@ -81,7 +81,7 @@ View::layout('head', ['title' => $title]);
           </div>
         </header>
       </div>
-      
+
       <main class="flex-1 lg:m-3">
         <!-- Stats Cards -->
         <div class="stats shadow w-full mb-2 stats-vertical lg:stats-horizontal">
@@ -194,7 +194,7 @@ View::layout('head', ['title' => $title]);
         </div>
         <li class="menu-title">Tổng quan</li>
         <li>
-          <a>
+          <a href="<?php echo _HOST_URL ?>/dashboard">
             <img
               src="./public/icons/house.svg"
               alt="House icon"
@@ -206,7 +206,7 @@ View::layout('head', ['title' => $title]);
 
         <li class="menu-title">Quản lý</li>
         <li>
-          <a>
+          <a href="<?php echo _HOST_URL ?>/dashboard">
             <img
               src="./public/icons/clipboard-list.svg"
               alt="Clipboard list icon"
@@ -216,7 +216,7 @@ View::layout('head', ['title' => $title]);
           </a>
         </li>
         <li>
-          <a>
+          <a href="<?php echo _HOST_URL ?>/dashboard">
             <img
               src="./public/icons/package.svg"
               alt="Package icon"
@@ -226,7 +226,7 @@ View::layout('head', ['title' => $title]);
           </a>
         </li>
         <li>
-          <a>
+          <a href="<?php echo _HOST_URL ?>/dashboard">
             <img
               src="./public/icons/users.svg"
               alt="Users icon"

@@ -91,7 +91,7 @@ View::layout('head', ['title' => $title]);
                     <span class="text-info">Tổng cộng: $999</span>
                     <div class="card-actions">
                       <!-- TODO: Modal or direct to new page -->
-                      <button class="btn btn-primary btn-block">Giỏ hàng</button>
+                      <a href="<?php echo _HOST_URL ?>/orders"><button class="btn btn-primary btn-block">Giỏ hàng</button></a>
                     </div>
                   </div>
                 </div>
