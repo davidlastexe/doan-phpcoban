@@ -2,9 +2,6 @@
 	"folders": [
 		{
 			"path": "."
-		},
-		{
-			"path": "../../opt/lampp/htdocs/doan-php"
 		}
 	],
   "settings": {}
